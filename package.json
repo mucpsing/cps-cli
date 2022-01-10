@@ -2,11 +2,26 @@
   "name": "cps-cli",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.mjs",
+  "bin": {
+    "c": "src/index.mjs"
+  },
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.8",
+    "rollup": "^2.63.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^8.3.0",
+    "i18n": "^0.13.4",
+    "inquirer": "^8.2.0",
+    "ora": "^6.0.1"
+  }
 }
