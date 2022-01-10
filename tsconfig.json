@@ -11,9 +11,6 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "ESNext",
-    "paths": {
-      "chalk": "node_modules/source/index.js"
-    },
     "lib": ["ESNext"] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
     "module": "commonjs" /* Specify the root folder within your source files. */,
     "moduleResolution": "Node" /* Specify how TypeScript looks up a file from a given module specifier. */,
