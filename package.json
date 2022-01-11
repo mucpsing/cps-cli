@@ -2,9 +2,9 @@
   "name": "cps-cli",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.mjs",
+  "types": "types/index.d.ts",
   "bin": {
-    "c": "src/index.mjs"
+    "c": "bin/index.mjs"
   },
   "type": "module",
   "scripts": {
