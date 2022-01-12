@@ -5,7 +5,7 @@ import path from "path";
 import chalk from "chalk";
 import { log } from "console";
 
-import wellcome from "../lib/wellcome.mjs";
+import wellcome from "../lib/welcome.mjs";
 
 const token = "";
 
