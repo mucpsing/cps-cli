@@ -7,8 +7,8 @@ export default async () => {
     {
       type: "list",
       name: "template",
-      message: chalk.bgCyan("选择需要的模板："),
-      choices: ["Electron+vue", "vue"],
+      message: chalk.bgCyan("选择需要的项目模板："),
+      choices: ["Vue", "Electron", "Python", "Node"],
       default: 0,
     },
   ]);
