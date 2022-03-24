@@ -40,5 +40,7 @@ export default async () => {
     // help()
   }
 
+  commands[command].run(arg);
+
   console.log(`当前要执行的${command}->${arg}`);
 };
