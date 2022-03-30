@@ -14,33 +14,26 @@
 import template from "./template/index.mjs";
 
 let commands = {
-  template: {
-    run: template,
-    args: {
-      node: {},
-      python: {},
-      electron: {},
-      vue: {},
-    },
-  },
+  template: template,
 };
 
-export default async () => {
+export default async (arg = undefined) => {
   const argv = process.argv;
   const command = argv[2].toString();
-  const arg = argv[3].toString();
 
   if (!commands.hasOwnProperty(command)) {
-    console.log("不支持的指令： ", command);
+    log("不支持的指令： ", command);
     // help()
   }
 
-  if (!commands[command]["args"].hasOwnProperty(arg)) {
-    console.log("不支持的参数： ", arg);
-    // help()
+  switch (process.argv.length) {
+    case 3:
+      log(`当前要执行的${command}:`);
+      commands[command].run();
+      break;
+    case 4:
+      log(`当前要执行的${command}->${arg}`);
+      commands[command].run(argv[3].toString());
+      break;
   }
-
-  commands[command].run(arg);
-
-  console.log(`当前要执行的${command}->${arg}`);
 };

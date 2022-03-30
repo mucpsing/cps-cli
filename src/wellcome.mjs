@@ -19,11 +19,10 @@ import tempalte from "./template/index.mjs";
 const selector = { template: tempalte };
 const VERSION = "v1.0.0";
 
-/*webcome msg*/
-// log(chalk.hex("#85E1E6").underline.bold(`cps-cli ${VERSION}`));
-log(chalk.hex("#85E1E6").bold(`cps-cli ${VERSION}`));
-
 export default async (welcomeMsg = "") => {
+  let msg = `cps-cli ${VERSION}`;
+  log(chalk.hex("#85E1E6").bold(msg));
+
   let { welcome: answers } = await inquirer.prompt([
     {
       type: "list",
@@ -31,15 +30,15 @@ export default async (welcomeMsg = "") => {
       message: chalk.bgGreen(`选择功能：`),
       choices: [
         {
-          name: "常用项目模板",
+          name: "1. 常用项目模板",
           value: "template",
         },
         {
-          name: "其他功能",
+          name: "2. 其他功能",
           value: "other",
         },
         {
-          name: "帮助",
+          name: "3. 帮助",
           value: "help",
         },
       ],
