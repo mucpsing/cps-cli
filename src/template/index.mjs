@@ -3,7 +3,7 @@ import { log } from "console";
 import inquirer from "inquirer";
 import git from "./git.mjs";
 import ora from "ora";
-import { getOrgInfo } from "../utils/gitee.mjs";
+import { getOrgInfo } from "../utils/gitee-api.mjs";
 import fsp from "fs/promises";
 
 const COMMAND = "template";
