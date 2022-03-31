@@ -1,42 +1,41 @@
 import chalk from "chalk";
 import { log } from "console";
 import inquirer from "inquirer";
-import git from "./git.mjs";
 import ora from "ora";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
+import download from "../utils/gitee-download.mjs";
+import { delay } from "../utils/index.mjs";
+
 import fsp from "fs/promises";
+import fse from "fs-extra";
+import path from "path";
+import os from "os";
 
-const COMMAND = "template";
+const COMMAND_NAME = "template";
 const ORG_NAME = "cps-cli-template";
-const URL_GET_ORG = `https://gitee.com/api/v5/orgs/${ORG_NAME}/repos`;
-
-async function delay(time) {
-  await new Promise(resolve => setTimeout(resolve, time));
-}
+const ORG_URL = `https://gitee.com/api/v5/orgs/${ORG_NAME}/repos`;
 
 async function user_select(selection) {
   // 生成选项
   let answer = await inquirer.prompt([
     {
       type: "list",
-      name: COMMAND,
+      name: COMMAND_NAME,
       message: chalk.bgCyan("选择需要的项目模板："),
       choices: selection,
       default: 0,
     },
   ]);
 
-  return answer[COMMAND];
+  return answer[COMMAND_NAME];
 }
 
 export default async (input = undefined) => {
-  const spinnerDiscardingStdin = ora({
-    text: "获取远程数据中...",
-  });
+  const spinnerDiscardingStdin = ora({ text: "获取远程数据中..." });
 
   spinnerDiscardingStdin.start();
 
-  const { res, data } = await getOrgInfo(URL_GET_ORG);
+  const { res, data } = await getOrgInfo(ORG_URL);
   if (!res) {
     spinnerDiscardingStdin.text = chalk.red("获取远程数据失败！");
     await delay(1000);
@@ -54,19 +53,29 @@ export default async (input = undefined) => {
 
   if (!templateHandler.hasOwnProperty(input)) log(chalk.hex("res").bold(`sorry, 不支持当前指令${input}`));
 
-  const repo_name = input;
-  const repo_url = templateHandler[input].url;
-  const target_path = process.cwd();
-
-  log(`当前选择的选择： ${repo_name}`);
-  log(`目标仓库路径：${repo_url}`);
+  const repoName = input;
+  const repoUrl = templateHandler[input].html_url;
+  const CWD = process.cwd();
 
   // 创建临时目录
   try {
-    const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "cps@cli-tempalte--"));
+    const temDir = await fsp.mkdtemp(path.join(os.tmpdir(), "cps@cli-tempalte--"));
+    const res = await download(repoUrl, temDir, { clone: true });
+
+    console.log("dir: ", temDir);
+    console.log("res: ", res);
+
+    await delay();
+
+    // await fse.copyFileSync(temDir, )
+
+    log(`目标目录: ${CWD}`);
+    log(`临时目录: ${res}`);
+
+    fse.remove(temDir);
   } catch (err) {
-    console.log("无法创建临时目录");
-    console.log(err);
+    console.log("出错了: ");
+    console.error(err);
     return;
   }
 
