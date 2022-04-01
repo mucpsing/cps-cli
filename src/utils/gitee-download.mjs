@@ -23,7 +23,8 @@ function normalize(repo) {
 
     return { type: "direct", url, checkout: directCheckout };
   } else {
-    regex = /^(?:(github|gitlab|bitbucket|gitee):)?(?:(.+):)?([^/]+)\/([^#]+)(?:#(.+))?$/;
+    regex =
+      /^(?:(github|gitlab|bitbucket|gitee):)?(?:(.+):)?([^/]+)\/([^#]+)(?:#(.+))?$/;
     match = regex.exec(repo);
     let type = match[1] || DEFAULT_REPO;
     let origin = match[2] || null;
@@ -89,11 +90,31 @@ function getUrl(repo, clone) {
     url = origin + repo.owner + "/" + repo.name + ".git";
   } else {
     if (repo.type === "github") {
-      url = origin + repo.owner + "/" + repo.name + "/archive/" + repo.checkout + ".zip";
+      url =
+        origin +
+        repo.owner +
+        "/" +
+        repo.name +
+        "/archive/" +
+        repo.checkout +
+        ".zip";
     } else if (repo.type === "gitlab") {
-      url = origin + repo.owner + "/" + repo.name + "/repository/archive.zip?ref=" + repo.checkout;
+      url =
+        origin +
+        repo.owner +
+        "/" +
+        repo.name +
+        "/repository/archive.zip?ref=" +
+        repo.checkout;
     } else if (repo.type === "bitbucket") {
-      url = origin + repo.owner + "/" + repo.name + "/get/" + repo.checkout + ".zip";
+      url =
+        origin +
+        repo.owner +
+        "/" +
+        repo.name +
+        "/get/" +
+        repo.checkout +
+        ".zip";
     }
   }
 
@@ -119,15 +140,17 @@ export function giteeDownload(repo, dest, opts = { clone: false }) {
     if (opts.clone) {
       const cloneOptions = {
         checkout: repoInfo.checkout,
-        shallow: repoInfo.checkout === "master",
+        shallow: false,
         ...opts,
       };
+
       gitclone(url, dest, cloneOptions, err => {
+        fs.removeSync(dest + "/.git");
+
         if (err === undefined) {
-          fs.removeSync(dest + "/.git");
-          resolve(dest);
+          resolve({ success: true });
         } else {
-          reject(err);
+          reject({ success: false, err });
         }
       });
     } else {
@@ -144,10 +167,10 @@ export function giteeDownload(repo, dest, opts = { clone: false }) {
 
       downloadUrl(url, dest, downloadOptions)
         .then(() => {
-          resolve(dest);
+          resolve({ success: true });
         })
         .catch(err => {
-          reject(err);
+          reject({ success: false, err });
         });
     }
   });
