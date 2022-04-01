@@ -1,7 +1,7 @@
 {
   "author": "CPS",
   "name": "cps-cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "个人自用脚手架",
   "main": "src/index.mjs",
   "module": "build/index.ems.js",
