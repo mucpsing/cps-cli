@@ -1,5 +1,6 @@
 import downloadUrl from "download";
 import gitclone from "git-clone";
+import fs from "fs-extra";
 
 export const DEFAULT_REPO = "gitee";
 export const DEFAULT_ORIGION = "gitee.com";
@@ -110,22 +111,21 @@ function getUrl(repo, clone) {
  * });
  * ```
  */
-function giteeDownload(repo, dest, opts = { clone: false }) {
+export function giteeDownload(repo, dest, opts = { clone: false }) {
   return new Promise((resolve, reject) => {
     const repoInfo = normalize(repo);
     const url = repo || getUrl(repo, clone);
 
-    if (clone) {
+    if (opts.clone) {
       const cloneOptions = {
         checkout: repoInfo.checkout,
         shallow: repoInfo.checkout === "master",
         ...opts,
       };
-
       gitclone(url, dest, cloneOptions, err => {
         if (err === undefined) {
-          rm(dest + "/.git");
-          resolve();
+          fs.removeSync(dest + "/.git");
+          resolve(dest);
         } else {
           reject(err);
         }
@@ -144,7 +144,7 @@ function giteeDownload(repo, dest, opts = { clone: false }) {
 
       downloadUrl(url, dest, downloadOptions)
         .then(() => {
-          resolve();
+          resolve(dest);
         })
         .catch(err => {
           reject(err);

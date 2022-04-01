@@ -11,12 +11,8 @@
  */
 import path from "path";
 
-export function get__dirname() {
-  return path.dirname(import.meta.url);
-}
+export const delay = (time = 1000) => new Promise(resolve => setTimeout(resolve, time));
 
-export function get__filename() {
-  return path.basename(import.meta.url);
-}
+export const __dirname = () => path.dirname(import.meta.url);
 
-process.env.__dirname = "ccvb";
+export const __filename = () => path.basename(import.meta.url);
