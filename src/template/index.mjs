@@ -50,12 +50,12 @@ export default async (input = undefined) => {
 
   // 没有输入则让用户选择
   if (!input) input = await user_select(templateSelection);
+  console.log("input: ", input);
 
   if (!templateHandler.hasOwnProperty(input)) log(chalk.hex("res").bold(`sorry, 不支持当前指令${input}`));
 
   const repoName = input;
   const repoUrl = templateHandler[input].html_url;
-  const CWD = process.cwd();
 
   // 创建临时目录
   try {
@@ -69,10 +69,14 @@ export default async (input = undefined) => {
 
     // await fse.copyFileSync(temDir, )
 
-    log(`目标目录: ${CWD}`);
-    log(`临时目录: ${res}`);
+    const dest = path.join(process.cwd(), input);
+    console.log("dest: ", dest);
+    const ret = fse.copySync(temDir, dest);
+    console.log("ret: ", ret);
 
-    fse.remove(temDir);
+    // fse.removeSync(temDir);
+
+    // const dirName = path.dirname();
   } catch (err) {
     console.log("出错了: ");
     console.error(err);
