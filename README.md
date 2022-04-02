@@ -32,6 +32,12 @@ $ cps
 $ cps <command>
 ```
 
+**command：**
+
+- tempalte 
+- add
+- help
+
 ![](screenshot/cps@template@1.1.0.gif)
 
 

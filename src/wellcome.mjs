@@ -32,11 +32,11 @@ export default async (welcomeMsg = "") => {
       message: chalk.bgGreen(`选择功能：`),
       choices: [
         {
-          name: "1. 常用项目模板",
+          name: "1. 常用项目模板下载",
           value: "template",
         },
         {
-          name: "2. 添加常用脚本",
+          name: "2. 常用脚本下载",
           value: "add",
         },
         {

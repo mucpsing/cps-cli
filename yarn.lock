@@ -7,12 +7,26 @@
   "resolved" "https://registry.npmjs.org/@sindresorhus/is/-/is-0.7.0.tgz"
   "version" "0.7.0"
 
+"@types/axios@^0.14.0":
+  "integrity" "sha1-7CMA++fX3d1+udOr+HmZlkyvzkY="
+  "resolved" "https://registry.npmjs.org/@types/axios/-/axios-0.14.0.tgz"
+  "version" "0.14.0"
+  dependencies:
+    "axios" "*"
+
 "@types/chalk@^2.2.0":
   "integrity" "sha512-1zzPV9FDe1I/WHhRkf9SNgqtRJWZqrBWgu7JGveuHmmyR9CnAPCie2N/x+iHrgnpYBIcCJWHBoMRv2TRWktsvw=="
   "resolved" "https://registry.npmjs.org/@types/chalk/-/chalk-2.2.0.tgz"
   "version" "2.2.0"
   dependencies:
     "chalk" "*"
+
+"@types/commander@^2.12.2":
+  "integrity" "sha512-0QEFiR8ljcHp9bAbWxecjVRuAMr16ivPiGOw6KFQBVrVd0RQIcM3xKdRisH2EDWgVWujiYtHwhSkSUoAAGzH7Q=="
+  "resolved" "https://registry.npmjs.org/@types/commander/-/commander-2.12.2.tgz"
+  "version" "2.12.2"
+  dependencies:
+    "commander" "*"
 
 "@types/decompress@*":
   "integrity" "sha512-/C8kTMRTNiNuWGl5nEyKbPiMv6HA+0RbEXzFhFBEzASM6+oa4tJro9b8nj7eRlOFfuLdzUU+DS/GPDlvvzMOhA=="
@@ -28,6 +42,13 @@
   dependencies:
     "@types/decompress" "*"
     "@types/got" "^8"
+    "@types/node" "*"
+
+"@types/fs-extra@^9.0.13":
+  "integrity" "sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA=="
+  "resolved" "https://registry.npmjs.org/@types/fs-extra/-/fs-extra-9.0.13.tgz"
+  "version" "9.0.13"
+  dependencies:
     "@types/node" "*"
 
 "@types/git-clone@^0.2.0":
@@ -78,7 +99,7 @@
   dependencies:
     "file-type" "^4.2.0"
 
-"axios@^0.24.0":
+"axios@*", "axios@^0.24.0":
   "integrity" "sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA=="
   "resolved" "https://registry.npmjs.org/axios/-/axios-0.24.0.tgz"
   "version" "0.24.0"
@@ -242,15 +263,15 @@
   "resolved" "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
   "version" "1.1.4"
 
+"commander@*", "commander@^8.3.0":
+  "integrity" "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="
+  "resolved" "https://registry.npmjs.org/commander/-/commander-8.3.0.tgz"
+  "version" "8.3.0"
+
 "commander@^2.8.1":
   "integrity" "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="
   "resolved" "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
   "version" "2.20.3"
-
-"commander@^8.3.0":
-  "integrity" "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="
-  "resolved" "https://registry.npmjs.org/commander/-/commander-8.3.0.tgz"
-  "version" "8.3.0"
 
 "content-disposition@^0.5.2":
   "integrity" "sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ=="
@@ -1032,13 +1053,6 @@
   dependencies:
     "onetime" "^5.1.0"
     "signal-exit" "^3.0.2"
-
-"rollup@^2.63.0":
-  "integrity" "sha512-nps0idjmD+NXl6OREfyYXMn/dar3WGcyKn+KBzPdaLecub3x/LrId0wUcthcr8oZUAcZAR8NKcfGGFlNgGL1kQ=="
-  "resolved" "https://registry.npmjs.org/rollup/-/rollup-2.63.0.tgz"
-  "version" "2.63.0"
-  optionalDependencies:
-    "fsevents" "~2.3.2"
 
 "run-async@^2.4.0":
   "integrity" "sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ=="
