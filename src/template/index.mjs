@@ -12,6 +12,8 @@ import { delay } from "../utils/index.mjs";
 const ORG_NAME = "cps-cli-template";
 
 export default async (input = undefined) => {
+  console.clear();
+
   const spinnerDiscardingStdin = ora({ text: "获取远程数据中..." });
 
   spinnerDiscardingStdin.start();
@@ -27,6 +29,7 @@ export default async (input = undefined) => {
   spinnerDiscardingStdin.succeed(chalk.green("获取远程数据成功！"));
 
   const templateHandler = data;
+  log(`目标目录: (${chalk.yellow.bold(process.cwd())})`);
 
   // 没有输入则让用户选择
   if (!input) {
@@ -44,7 +47,7 @@ export default async (input = undefined) => {
   }
 
   if (!templateHandler.hasOwnProperty(input))
-    log(chalk.hex("res").bold(`sorry, 不支持当前指令${input}`));
+    log(chalk.red.bold(`sorry, 不支持当前指令${input}`));
 
   const repoName = input;
   const repoUrl = `${templateHandler[input].namespace.html_url}/${input}`;

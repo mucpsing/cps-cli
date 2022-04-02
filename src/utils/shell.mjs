@@ -13,15 +13,9 @@ export const Shell = async (
   try {
     const { stdout, stderr } = await exec(commands, options);
 
-    if (stdout) {
-      const res = stdout.trim();
-      return { sucess: true, res };
-    }
+    if (stdout) return { sucess: true, res: stdout.trim() };
 
-    if (stderr) {
-      const err = stderr.toString();
-      return { sucess: false, err };
-    }
+    if (stderr) return { sucess: false, err: stderr.toString() };
   } catch (e) {
     return { success: false, err: e.toString() };
   }

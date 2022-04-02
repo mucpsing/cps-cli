@@ -20,8 +20,10 @@ const selector = { template: tempalte };
 const VERSION = "v1.0.0";
 
 export default async (welcomeMsg = "") => {
-  let msg = `cps-cli ${VERSION}`;
-  log(chalk.hex("#85E1E6").bold(msg));
+  console.clear();
+  let msg = `cps-cli@${VERSION}`;
+
+  log(chalk.cyan.bold(msg));
 
   let { welcome: answers } = await inquirer.prompt([
     {
@@ -34,11 +36,15 @@ export default async (welcomeMsg = "") => {
           value: "template",
         },
         {
-          name: "2. 其他功能",
-          value: "other",
+          name: "2. 添加常用脚本",
+          value: "add",
         },
         {
-          name: "3. 帮助",
+          name: "3. 自定义",
+          value: "config",
+        },
+        {
+          name: "4. 帮助",
           value: "help",
         },
       ],

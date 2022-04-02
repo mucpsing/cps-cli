@@ -12,6 +12,8 @@
 
 "use strict";
 import template from "./template/index.mjs";
+import { log } from "console";
+import chalk from "chalk";
 
 let commands = {
   template: template,
@@ -22,18 +24,19 @@ export default async (arg = undefined) => {
   const command = argv[2].toString();
 
   if (!commands.hasOwnProperty(command)) {
-    log("不支持的指令： ", command);
+    log("不支持的指令： ", chalk.bgRed(command));
     // help()
+    process.exit(0);
   }
 
   switch (process.argv.length) {
     case 3:
       log(`当前要执行的${command}:`);
-      commands[command].run();
+      commands[command]();
       break;
     case 4:
       log(`当前要执行的${command}->${arg}`);
-      commands[command].run(argv[3].toString());
+      commands[command](argv[3].toString());
       break;
   }
 };
