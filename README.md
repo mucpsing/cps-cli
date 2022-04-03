@@ -6,7 +6,7 @@
     <img flex="left" src="https://img.shields.io/badge/npm-%3E%3D6.x-blue"/>
     <img flex="left" src="https://img.shields.io/badge/node-%3E%3D16.11-brightgreen"/>
 </div>
-**[English](README.en.md) | 简体中文**
+[English](README.en.md) | 简体中文
 
 # 安装 | Install
 

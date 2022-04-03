@@ -9,10 +9,11 @@ import fse from "fs-extra";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
 import download from "../utils/gitee-download.mjs";
 import { delay, ifDirExists } from "../utils/index.mjs";
+import { EMPTY_STRING } from "../env.mjs";
 
 const ORG_NAME = "cps-cli-template";
 
-export default async (repoName = "") => {
+export default async (repoName = EMPTY_STRING) => {
   console.clear();
 
   const displayMsg = ora({ text: "获取远程数据中..." });
@@ -51,8 +52,7 @@ export default async (repoName = "") => {
     repoName = answer["res"];
   }
 
-  if (!data.hasOwnProperty(repoName))
-    log(chalk.red.bold(`sorry, 不支持当前指令${repoName}`));
+  if (!data.hasOwnProperty(repoName)) log(chalk.red.bold(`sorry, 不支持当前指令${repoName}`));
 
   const repoUrl = `${data[repoName].namespace.html_url}/${repoName}`;
   const dest = path.join(process.cwd(), repoName);
