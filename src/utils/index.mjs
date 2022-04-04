@@ -12,10 +12,7 @@ export const __dirname = () => path.dirname(import.meta.url);
 
 export const __filename = () => path.basename(import.meta.url);
 
-export const recodeTime = () => {
-  moment.locale();
-  return moment.format("L");
-};
+export const currtTime = () => moment().format("YYYY-MM-DD");
 
 export const ifDirExists = async filePath => {
   if (fse.existsSync(filePath)) {
@@ -31,7 +28,7 @@ export const ifDirExists = async filePath => {
 
     if (overwrite) {
       try {
-        await fse.removeSync(filePath);
+        await fse.remove(filePath);
         delay(500);
       } catch (err) {
         log(chalk.red.bold(`sorry, 删除目录${basename}失败：`));
