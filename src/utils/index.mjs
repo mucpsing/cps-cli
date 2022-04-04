@@ -4,13 +4,18 @@ import { log } from "console";
 import fse from "fs-extra";
 import chalk from "chalk";
 import inquirer from "inquirer";
+import moment from "moment";
 
-export const delay = (time = 1000) =>
-  new Promise(resolve => setTimeout(resolve, time));
+export const delay = (time = 1000) => new Promise(resolve => setTimeout(resolve, time));
 
 export const __dirname = () => path.dirname(import.meta.url);
 
 export const __filename = () => path.basename(import.meta.url);
+
+export const recodeTime = () => {
+  moment.locale();
+  return moment.format("L");
+};
 
 export const ifDirExists = async filePath => {
   if (fse.existsSync(filePath)) {
@@ -19,9 +24,7 @@ export const ifDirExists = async filePath => {
       {
         name: "overwrite",
         type: "confirm",
-        message: chalk.yellow.bold(
-          `目标目录./${basename}/已存在，是否覆盖？`
-        ),
+        message: chalk.yellow.bold(`目标目录./${basename}/已存在，是否覆盖？`),
         default: false,
       },
     ]);
