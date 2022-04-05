@@ -9,7 +9,7 @@ import fse from "fs-extra";
 import Download from "../utils/gitee-download.mjs";
 import { delay, ifDirExists } from "../utils/index.mjs";
 import { EMPTY_STRING } from "../env.mjs";
-import Config from "./config.mjs";
+import ConfigMamager from "./config.mjs";
 
 async function userSelectRepo(selection) {
   const answer = await inquirer.prompt([
@@ -25,7 +25,8 @@ async function userSelectRepo(selection) {
 }
 
 export default async (repoName = EMPTY_STRING) => {
-  // console.clear();
+  let Config = await ConfigMamager();
+  const display = ora();
 
   const data = Config.orgInfo;
   const org_url = Config.config["org_url"];
@@ -49,21 +50,22 @@ export default async (repoName = EMPTY_STRING) => {
   await ifDirExists(dest);
 
   try {
+    display.start("开始下载项目模板...");
+    await delay(1000);
     const res = await Download(repoUrl, dest, { clone: true });
-    console.log("res: ", res);
 
     if (res.success) {
-      log(chalk.green(`下载[${repoName}]模板完成！`));
+      display.succeed(chalk.green(`下载[${repoName}]模板完成！`));
 
       process.exit(1);
     } else {
-      log(chalk.red(`下载[${repoName}]模板失败：`));
+      display.fail(chalk.red(`下载[${repoName}]模板失败：`));
       log(res.err);
 
       process.exit(0);
     }
   } catch (err) {
-    log(chalk.red(`下载[${repoName}]模板失败：`));
+    display.fail(chalk.red(`下载[${repoName}]模板失败：`));
     console.error(err);
 
     process.exit(0);

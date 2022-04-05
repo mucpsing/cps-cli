@@ -2,10 +2,11 @@ import path from "path";
 import { log } from "console";
 
 import fse from "fs-extra";
+import ora from "ora";
 
 import { EMPTY_STRING } from "../env.mjs";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
-import { currtTime } from "../utils/index.mjs";
+import { currtTime, delay } from "../utils/index.mjs";
 
 const DEFAULT_CONFIG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc")}`;
 const DEFAULT_ORG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc.org_info")}`;
@@ -19,20 +20,22 @@ export class ConfigManager {
 
     this.config = {};
     this.orgInfo = {};
-
-    this.init();
   }
 
   async init() {
+    const display = ora();
+
     // 读取本地配置文件
+    display.start("读取.cpsrc配置文件...");
     await this._readFile();
+    display.succeed("读取.cpsrc配置文件 完成！");
+    await delay(500);
 
     // 判断是否需要更新文件
+    display.start("正在读取缓存数据...");
     await this._readOrgFile();
-
-    // 返回最终数据对象
-    // log(this.config);
-    // log(this.orgInfo);
+    display.succeed("读取缓存数据 完成！");
+    await delay(1000);
   }
 
   async _readFile() {
@@ -47,7 +50,7 @@ export class ConfigManager {
     const file = this.configFilePath;
     const display = this.display;
 
-    // display.start(`创建配置文件...`);
+    display.start(`创建配置文件...`);
     const defaultConfig = {
       orgName: this.orgName,
       org_info_path: null,
@@ -56,9 +59,16 @@ export class ConfigManager {
       add_time: this.ctime,
     };
 
-    await fse.writeJson(file, defaultConfig, { spaces: "  " });
-    // display.succeed("文件创建完成");
+    try {
+      await fse.writeJson(file, defaultConfig, { spaces: "  " });
+    } catch (err) {
+      display.fail(".cpsrc 写入失败");
+      await delay(1000);
+      console.error(err);
+      process.exit(0);
+    }
 
+    display.succeed("文件创建完成");
     return defaultConfig;
   }
 
@@ -104,13 +114,17 @@ export class ConfigManager {
   }
 }
 
-const Config = new ConfigManager();
+let Config;
+export default async () => {
+  if (!Config) {
+    Config = new ConfigManager();
 
-// export default new ConfigManager();
-export default Config;
+    await Config.init();
+  }
+
+  return Config;
+};
 
 // (async () => {
-//   console.log(DEFAULT_CONFIG_FILE_PATH);
-
-//   const config = new ConfigManager();
+//   let config = await Config();
 // })();

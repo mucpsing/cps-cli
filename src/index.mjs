@@ -9,16 +9,22 @@ import Config from "./commands/config.mjs";
 import CommandsHandler from "./commandsHandler.mjs";
 import Wellcome from "./wellcome.mjs";
 
-switch (process.argv.length) {
-  case 1:
-  case 2:
-    Wellcome();
-    break;
+async function main() {
+  let config = await Config();
 
-  case 3:
-  case 4:
-    CommandsHandler();
-    break;
-  default:
-    Wellcome();
+  switch (process.argv.length) {
+    case 1:
+    case 2:
+      Wellcome();
+      break;
+
+    case 3:
+    case 4:
+      CommandsHandler();
+      break;
+    default:
+      Wellcome();
+  }
 }
+
+main();
