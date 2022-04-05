@@ -16,22 +16,15 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 
 import Tempalte from "./commands/template.mjs";
-// import Config from "./commands/config.mjs";
 
 const commands = { template: Tempalte };
-const VERSION = "v1.1.0";
 
 const Wellcome = async () => {
-  console.clear();
-  let msg = `cps-cli@${VERSION}`;
-
-  log(chalk.cyan.bold(msg));
-
   let { welcome: answers } = await inquirer.prompt([
     {
       type: "rawlist",
       name: "welcome",
-      message: chalk.bgGreen(`选择功能：`),
+      message: `${chalk.bgGreen("选择功能")}: (Use arrow keys)`,
       choices: [
         {
           name: "常用项目模板下载",
