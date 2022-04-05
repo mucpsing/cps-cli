@@ -25,13 +25,13 @@ async function userSelectRepo(selection) {
 }
 
 export default async (repoName = EMPTY_STRING) => {
-  console.clear();
+  // console.clear();
 
   const data = Config.orgInfo;
   const org_url = Config.config["org_url"];
 
-  log(`目标组织仓库:  ${chalk.yellow.bold(org_url)}`);
-  log(`当前工作目录:  ${chalk.yellow.bold(process.cwd())}`);
+  log(`   目标组织仓库:  ${chalk.yellow.bold(org_url)}`);
+  log(`   当前工作目录:  ${chalk.yellow.bold(process.cwd())}`);
 
   // 如果没有指定仓库，则让用户选择
   if (repoName == "") {

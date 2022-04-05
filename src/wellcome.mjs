@@ -28,24 +28,24 @@ const Wellcome = async () => {
 
   let { welcome: answers } = await inquirer.prompt([
     {
-      type: "list",
+      type: "rawlist",
       name: "welcome",
       message: chalk.bgGreen(`选择功能：`),
       choices: [
         {
-          name: "1. 常用项目模板下载",
+          name: "常用项目模板下载",
           value: "template",
         },
         {
-          name: "2. 常用脚本下载",
+          name: "常用脚本下载",
           value: "add",
         },
         {
-          name: "3. 自定义",
+          name: "自定义",
           value: "config",
         },
         {
-          name: "4. 帮助",
+          name: "帮助",
           value: "help",
         },
       ],
