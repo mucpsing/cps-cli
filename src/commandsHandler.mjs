@@ -19,7 +19,7 @@ const commands = {
   template: template,
 };
 
-export default async (arg = undefined) => {
+export default async () => {
   const argv = process.argv;
   const command = argv[2].toString();
 
@@ -35,7 +35,7 @@ export default async (arg = undefined) => {
       commands[command]();
       break;
     case 4:
-      log(`当前要执行的${command}->${arg}`);
+      log(`当前要执行的${command}->${argv[3]}`);
       commands[command](argv[3].toString());
       break;
   }

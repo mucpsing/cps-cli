@@ -15,9 +15,10 @@ import { log } from "console";
 import inquirer from "inquirer";
 import chalk from "chalk";
 
-import tempalte from "./commands/template.mjs";
+import Tempalte from "./commands/template.mjs";
+// import Config from "./commands/config.mjs";
 
-const commands = { template: tempalte };
+const commands = { template: Tempalte };
 const VERSION = "v1.1.0";
 
 const Wellcome = async () => {
@@ -53,8 +54,6 @@ const Wellcome = async () => {
     },
   ]);
 
-  if (!answers) return;
-
   if (commands[answers]) {
     commands[answers]();
   } else {
@@ -64,6 +63,6 @@ const Wellcome = async () => {
 
 export default Wellcome;
 
-(async () => {
-  Wellcome();
-})();
+// (async () => {
+//   Wellcome();
+// })();

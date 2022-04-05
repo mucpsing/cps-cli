@@ -5,19 +5,20 @@ import path from "path";
 import chalk from "chalk";
 import { log } from "console";
 
-import commandsHandler from "./commandsHandler.mjs";
-import wellcome from "./wellcome.mjs";
+import Config from "./commands/config.mjs";
+import CommandsHandler from "./commandsHandler.mjs";
+import Wellcome from "./wellcome.mjs";
 
 switch (process.argv.length) {
   case 1:
   case 2:
-    wellcome();
+    Wellcome();
     break;
 
   case 3:
   case 4:
-    commandsHandler();
+    CommandsHandler();
     break;
   default:
-    wellcome();
+    Wellcome();
 }

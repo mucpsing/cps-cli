@@ -104,9 +104,10 @@ export class ConfigManager {
   }
 }
 
-// const Config = new ConfigManager()
+const Config = new ConfigManager();
 
-export default new ConfigManager();
+// export default new ConfigManager();
+export default Config;
 
 // (async () => {
 //   console.log(DEFAULT_CONFIG_FILE_PATH);
