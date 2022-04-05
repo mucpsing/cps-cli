@@ -14,7 +14,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { log } from "console";
-import tempalte from "./template/index.mjs";
+import tempalte from "./commands/template.mjs";
 
 const selector = { template: tempalte };
 const VERSION = "v1.0.0";

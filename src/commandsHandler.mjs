@@ -11,11 +11,11 @@
  */
 
 "use strict";
-import template from "./template/index.mjs";
+import template from "./commands/template.mjs";
 import { log } from "console";
 import chalk from "chalk";
 
-let commands = {
+const commands = {
   template: template,
 };
 
