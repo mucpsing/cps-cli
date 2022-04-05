@@ -2,7 +2,6 @@ import path from "path";
 import { log } from "console";
 
 import fse from "fs-extra";
-import ora from "ora";
 
 import { EMPTY_STRING } from "../env.mjs";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
@@ -21,11 +20,7 @@ export class ConfigManager {
     this.config = {};
     this.orgInfo = {};
 
-    this.display = ora();
-
     this.init();
-
-    log("初始化配置对象");
   }
 
   async init() {
@@ -52,8 +47,7 @@ export class ConfigManager {
     const file = this.configFilePath;
     const display = this.display;
 
-    display.start(`创建配置文件...`);
-
+    // display.start(`创建配置文件...`);
     const defaultConfig = {
       orgName: this.orgName,
       org_info_path: null,
@@ -63,7 +57,7 @@ export class ConfigManager {
     };
 
     await fse.writeJson(file, defaultConfig, { spaces: "  " });
-    display.succeed("文件创建完成");
+    // display.succeed("文件创建完成");
 
     return defaultConfig;
   }
@@ -71,7 +65,7 @@ export class ConfigManager {
   async _getOrgInfo(orgName = EMPTY_STRING) {
     orgName = orgName || this.config["org_name"] || DEFAULT_ORG_NAME;
 
-    this.display.start("获取远程组织仓库信息...");
+    // this.display.start("获取远程组织仓库信息...");
     const { success, data, err, url } = await getOrgInfo(this.orgName);
     if (!success) {
       console.error(err);
@@ -79,7 +73,7 @@ export class ConfigManager {
       return false;
     }
 
-    this.display.succeed(`拉取组织${orgName}成功！`);
+    // this.display.succeed(`拉取组织${orgName}成功！`);
     return { data, url };
   }
 
@@ -94,7 +88,7 @@ export class ConfigManager {
 
     const needUpdate = isNnll || isNotExist || !isSameModifyTime;
     if (needUpdate) {
-      log("获取线上数据");
+      // log("获取线上数据");
       const { url, data } = await this._getOrgInfo();
 
       this.orgInfo = data;
@@ -104,12 +98,10 @@ export class ConfigManager {
       this.config["org_url"] = url;
       await fse.writeJson(this.configFilePath, this.config, { spaces: "  " });
     } else {
-      log("读取本地缓存");
+      // log("读取本地缓存");
       this.orgInfo = await fse.readJson(this.config["org_info_path"]);
     }
   }
-
-  async setOrgName() {}
 }
 
 // const Config = new ConfigManager()

@@ -10,16 +10,17 @@
  * @Description: 功能描述
  */
 
-"use strict";
+import { log } from "console";
+
 import inquirer from "inquirer";
 import chalk from "chalk";
-import { log } from "console";
+
 import tempalte from "./commands/template.mjs";
 
-const selector = { template: tempalte };
-const VERSION = "v1.0.0";
+const commands = { template: tempalte };
+const VERSION = "v1.1.0";
 
-export default async (welcomeMsg = "") => {
+const Wellcome = async () => {
   console.clear();
   let msg = `cps-cli@${VERSION}`;
 
@@ -54,9 +55,15 @@ export default async (welcomeMsg = "") => {
 
   if (!answers) return;
 
-  if (selector[answers]) {
-    selector[answers]();
+  if (commands[answers]) {
+    commands[answers]();
   } else {
     log(`${chalk.red("无效选择")}`);
   }
 };
+
+export default Wellcome;
+
+(async () => {
+  Wellcome();
+})();
