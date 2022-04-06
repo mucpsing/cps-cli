@@ -12,7 +12,8 @@
     "cps": "src/index.mjs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "npm publish --access public"
   },
   "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "ISC",
@@ -38,5 +39,8 @@
     "inquirer": "^8.2.0",
     "moment": "^2.29.2",
     "ora": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=16.6.0"
   }
 }
