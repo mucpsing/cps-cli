@@ -13,20 +13,13 @@ import Wellcome from "./wellcome.mjs";
 import { delay } from "./utils/index.mjs";
 
 (async () => {
-  const pkgPath = path.resolve(
-    path.dirname(process.argv[1]),
-    "../package.json"
-  );
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
 
   const pkg = fse.readJSONSync(pkgPath);
   const ConfigManager = await Config();
 
   console.clear();
-  log(
-    chalk.cyan.bold(`${pkg.name}@${pkg.version}`),
-    " --- ",
-    chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`)
-  );
+  log(chalk.cyan.bold(`cps-cli@${pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`));
 
   switch (process.argv.length) {
     case 1:
