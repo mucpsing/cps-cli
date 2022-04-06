@@ -1,6 +1,6 @@
 {
   "author": "CPS",
-  "name": "cps-cli",
+  "name": "@mucpsing/cli",
   "version": "1.1.0",
   "description": "个人自用脚手架",
   "main": "src/index.mjs",
@@ -13,7 +13,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["cli", "capsion", "cps"],
+  "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "ISC",
   "devDependencies": {
     "@types/axios": "^0.14.0",
