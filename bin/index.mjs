@@ -1,1 +1,2 @@
-import cli from "../src/index.mjs";
+#!/usr/bin/env node
+import "../src/index.mjs";

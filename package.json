@@ -3,12 +3,12 @@
   "name": "cps-cli",
   "version": "1.1.0",
   "description": "个人自用脚手架",
-  "main": "bin/index.mjs",
+  "main": "src/index.mjs",
   "module": "build/index.ems.js",
   "type": "module",
   "types": "types/index.d.ts",
   "bin": {
-    "cps": "bin/index.mjs"
+    "cps": "src/index.mjs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

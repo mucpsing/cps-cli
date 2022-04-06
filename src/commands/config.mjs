@@ -8,8 +8,14 @@ import { EMPTY_STRING } from "../env.mjs";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
 import { currtTime, delay } from "../utils/index.mjs";
 
-const DEFAULT_CONFIG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc")}`;
-const DEFAULT_ORG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc.org_info")}`;
+const DEFAULT_CONFIG_FILE_PATH = `${path.join(
+  process.env.USERPROFILE,
+  ".cpsrc"
+)}`;
+const DEFAULT_ORG_FILE_PATH = `${path.join(
+  process.env.USERPROFILE,
+  ".cpsrc.org_info"
+)}`;
 const DEFAULT_ORG_NAME = "cps-cli-template";
 
 export class ConfigManager {
@@ -17,6 +23,7 @@ export class ConfigManager {
     this.configFilePath = DEFAULT_CONFIG_FILE_PATH;
     this.orgName = orgName || DEFAULT_ORG_NAME;
     this.ctime = currtTime();
+    this.display = ora();
 
     this.config = {};
     this.orgInfo = {};
@@ -76,7 +83,9 @@ export class ConfigManager {
     orgName = orgName || this.config["org_name"] || DEFAULT_ORG_NAME;
 
     // this.display.start("获取远程组织仓库信息...");
-    const { success, data, err, url } = await getOrgInfo(this.orgName);
+    const { success, data, err, url } = await getOrgInfo(
+      this.orgName
+    );
     if (!success) {
       console.error(err);
       this.display.fail("获取组织信息失败");
@@ -92,7 +101,8 @@ export class ConfigManager {
     if (isNnll) this.config.org_info_path = DEFAULT_ORG_FILE_PATH;
 
     const isNotExist = !fse.existsSync(this.config["org_info_path"]);
-    if (isNotExist) await fse.ensureFile(this.config["org_info_path"]);
+    if (isNotExist)
+      await fse.ensureFile(this.config["org_info_path"]);
 
     const isSameModifyTime = this.config["modify_time"] == this.ctime;
 
@@ -102,11 +112,17 @@ export class ConfigManager {
       const { url, data } = await this._getOrgInfo();
 
       this.orgInfo = data;
-      await fse.writeJson(this.config["org_info_path"], this.orgInfo, { spaces: "  " });
+      await fse.writeJson(
+        this.config["org_info_path"],
+        this.orgInfo,
+        { spaces: "  " }
+      );
 
       this.config["modify_time"] = this.ctime;
       this.config["org_url"] = url;
-      await fse.writeJson(this.configFilePath, this.config, { spaces: "  " });
+      await fse.writeJson(this.configFilePath, this.config, {
+        spaces: "  ",
+      });
     } else {
       // log("读取本地缓存");
       this.orgInfo = await fse.readJson(this.config["org_info_path"]);
