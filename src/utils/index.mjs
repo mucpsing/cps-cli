@@ -6,7 +6,8 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import moment from "moment";
 
-export const delay = (time = 1000) => new Promise(resolve => setTimeout(resolve, time));
+export const delay = (time = 1000) =>
+  new Promise(resolve => setTimeout(resolve, time));
 
 export const __dirname = () => path.dirname(import.meta.url);
 
@@ -21,7 +22,9 @@ export const ifDirExists = async filePath => {
       {
         name: "overwrite",
         type: "confirm",
-        message: chalk.yellow.bold(`目标目录./${basename}/已存在，是否覆盖？`),
+        message: chalk.yellow.bold(
+          `目标目录./${basename}/已存在，是否覆盖？`
+        ),
         default: false,
       },
     ]);
@@ -37,6 +40,30 @@ export const ifDirExists = async filePath => {
       }
     }
   }
+};
+
+export const Confirm = async (msg, defaultRes = false) => {
+  const { res } = await inquirer.prompt([
+    {
+      name: "res",
+      type: "confirm",
+      message: msg,
+      default: defaultRes,
+    },
+  ]);
+  return res;
+};
+
+export const Input = async (msg, defaultRes = "") => {
+  const { res } = await inquirer.prompt([
+    {
+      name: "res",
+      type: "input",
+      message: msg,
+      default: defaultRes,
+    },
+  ]);
+  return res;
 };
 
 // export const inputSelect = async selection => {

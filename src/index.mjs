@@ -19,9 +19,7 @@ import { delay } from "./utils/index.mjs";
   );
 
   const pkg = fse.readJSONSync(pkgPath);
-  console.log("pkgPath: ", pkgPath);
   const ConfigManager = await Config();
-  await delay(500);
 
   console.clear();
   log(
