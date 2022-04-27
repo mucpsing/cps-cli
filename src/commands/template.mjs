@@ -34,8 +34,8 @@ export default async (repoName = EMPTY_STRING) => {
   log(`   目标组织仓库:  ${chalk.yellow.bold(org_url)}`);
   log(`   当前工作目录:  ${chalk.yellow.bold(process.cwd())}`);
 
-  // 如果没有指定仓库，则让用户选择
-  if (repoName == "") {
+  // 没有指定仓库，列出所有仓库名称，让用户选择
+  if (repoName == "" || typeof repoName == "boolean") {
     repoName = await userSelectRepo(Object.keys(data));
   } else {
     if (!data.hasOwnProperty(repoName)) {
@@ -47,9 +47,7 @@ export default async (repoName = EMPTY_STRING) => {
   }
 
   const repoUrl = `${data[repoName].namespace.html_url}/${repoName}`;
-
   const projectName = await Input(`请输入项目名称:`, repoName);
-
   const dest = path.join(process.cwd(), projectName);
 
   await ifDirExists(dest);
