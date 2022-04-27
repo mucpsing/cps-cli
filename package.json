@@ -6,7 +6,7 @@
   "main": "src/index.mjs",
   "module": "build/index.ems.js",
   "type": "module",
-  "types": "types/index.d.ts",
+  "typings": "types/index.d.ts",
   "bin": {
     "cps": "src/index.mjs"
   },
