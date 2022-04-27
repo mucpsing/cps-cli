@@ -66,6 +66,34 @@ export const Input = async (msg, defaultRes = "") => {
   return res;
 };
 
+function check_type_by_prototype(target) {
+  // 'number'
+  // 'string'
+  // 'symbol'
+  // 'bigint'
+  // 'unll'
+  // 'undefined'
+  // 'boolean'
+
+  return Object.prototype.toString
+    .call(target)
+    .toLowerCase()
+    .replace("[object ", "")
+    .replace("]", "");
+}
+
+function check_type_by_typeof(target) {
+  // 'number'
+  // 'string'
+  // 'symbol'
+  // 'bigint'
+  // 'unll'
+  // 'undefined'
+  // 'boolean'
+
+  return typeof target;
+}
+
 // export const inputSelect = async selection => {
 //   const title = "template";
 //   const answer = await inquirer.prompt([
