@@ -27,21 +27,14 @@ program
 const options = program.opts();
 
 (async () => {
-  const pkgPath = path.resolve(
-    path.dirname(process.argv[1]),
-    "../package.json"
-  );
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
 
   const pkg = fse.readJSONSync(pkgPath);
   const ConfigManager = await Config();
 
   // 清除 Config 的打印信息
   console.clear();
-  log(
-    chalk.cyan.bold(`${pkg.name}@${pkg.version}`),
-    " --- ",
-    chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`)
-  );
+  log(chalk.cyan.bold(`cps-cli@${pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`));
 
   if (JSON.stringify(options) == "{}") {
     return Wellcome();
