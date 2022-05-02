@@ -1,7 +1,7 @@
 {
   "author": "CPS",
   "name": "@mucpsing/cli",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "个人自用脚手架",
   "main": "src/index.mjs",
   "module": "build/index.ems.js",
