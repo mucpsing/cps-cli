@@ -13,20 +13,18 @@
 
 
 
-# 目录|Index
+## 目录|Index
 
-1. [简介|Introductions](# 简介|Introductions)
-2. [基础功能|Base](#基础功能|Base)
-3. [安装|Install](#安装 | Install)
-4. [使用|Usage](#使用 | Usage)
-5. [配置|Settings](#配置 | Settings)
-6. [联系方式|contact](#联系方式 | contact)
-
-
+1. [简介|Introductions](#简介|Introductions)
+2. [基础功能|Base](##基础功能|Base)
+3. [安装|Install](#安装|Install)
+4. [使用|Usage](#使用|Usage)
+5. [配置|Settings](#配置|Settings)
+6. [联系方式|contact](#联系方式|contact)
 
 
 
-# 基础功能|Base
+## 基础功能|Base
 
 - 下载仓库组织里面的项目
   - [x] electron + vue3 + vite + tailwindCSS
