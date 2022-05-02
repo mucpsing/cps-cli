@@ -24,33 +24,24 @@
 
 
 
-## 基础功能|Base
+## 主要功能|Base
 
-- 下载仓库组织里面的项目
-  - [x] electron + vue3 + vite + tailwindCSS
-  - [x] node + esm (>=16.x)
-  - [x] node-ts：rollup (CommonJS + EMS + UMD)
-  - [x] python-project-base（纯脚本）
-  - [ ] koa-ts
-  - [ ] fastify-ts
-  - [ ] server-py
-
+- 一键下载仓库组织里面的项目
+  - [x] 当前默认的仓库组织：https://gitee.com/cps-cli-template
+  - [x] 通过配置文件修改关联自己的仓库组织
+  - [ ] 添加强制拉取线上数据功能（默认每天首次获取线上，后续采用本地缓存）
 - 下载常用的脚本到当前目录
-
+  - [ ] 关联指定仓库，下载自己的工具函数文件
 - 支持定义自己的组织仓库
   - [x] gitee
   - [ ] github
   - [ ] gitlab
   - [ ] bitbucket
 
-> 当前 默认组织：https://gitee.com/cps-cli-template 通过配 `~/.cpsrc`置文件修改` 
-
 - 支持Typora上传图片
   - [x] picgo引擎上传
   - [ ] 搭建本地图片服务器
   - [ ] 一键批量替换`md`文件内图片链接
-
-
 
 
 
@@ -66,14 +57,14 @@ npm i -g @mucpsing/cps-cli
 
 # 使用|Usage
 
-**基础语法：**
-
 ```bash
 $ cps -h
 Usage: index [options]
 
 Options:
-  -t, --template [tempaletName]  下载常用模板 .cpsrc.template
+  -t, --template [tempaletName]  快速下载关联的仓库组织内的项目
+  															(配置：~/.cpsrc["template"])
+  															
   -a, --add <script>             添加常用工具函数 .cpsrc.add
   -u, --upload <imgPath>         上传图片到gitee/github仓库, 对应配置 .cpsrc.upload
   -h, --help                     display help for command
@@ -81,7 +72,9 @@ Options:
 
 
 
-## Command
+## -t --templates
+
+### **only Command**
 
 ```bash
 $ cps
@@ -91,10 +84,14 @@ $ cps
 
 
 
-## Command  with Flag
+### **with Flag:**
 
 ```bash
 $ cps <flag>
+
+cps --template
+#or
+cps -t
 ```
 
 ![](screenshot/cps@template.gif)
@@ -103,15 +100,33 @@ $ cps <flag>
 
 
 
-## Command with Flag with Options
+### **with Flag And Options:**
 
 ```bash
 $ cps <flag> [<option1>, [<option2>]]
+
+cps --template <仓库名称[可选]> <本地保存路径[可选]>
+# or
+cps -t
+# or
+cps --template node-ts myProjectName
 ```
 
 ![](screenshot/cps@template@projectName.gif)
 
 
+
+
+
+## -a --add
+
+未完待续（有空再写）
+
+
+
+## -u --upload
+
+未完待续（有空再写）
 
 
 
@@ -130,17 +145,20 @@ $ cps <flag> [<option1>, [<option2>]]
       "org_add_time": "2022-04-05",
       "org_modify_time": "2022-05-02"
     },
+    
+    // 上传配置，这里的 gitee-local 是修改自 picgo-gitee-plugin
+    // 配置跟picgo上一样
     "upload": {
       "picgo": {
         "picBed": {
           "uploader": "gitee-local",
           "current": "gitee-local",
-          "gitee-local": {
-            "owner": "capsion",
+          "gitee-local": { // 对应 picgo-gitee-plugin 的配置
+            "owner": "capsion",	
             "repo": "markdown-image",
             "path": "image",
             "token": "{your gitee token}",
-            "message": "test"
+            "message": "cps-cli upload"
           }
         }
       }
@@ -152,11 +170,15 @@ $ cps <flag> [<option1>, [<option2>]]
 
 - `~/.cpsrc.org_info`
 
+  仓库组织的离线数据缓存，因为**gitee**获取组织仓库的**Api**有每日请求次数限制，所以每天只拉取一次线上数据，然后缓存到本地，以`json`格式存储。
+  
+  
+  
   ```js
   // https://gitee.com/api/v5/orgs/${org_name}/repos
   {...org_info}
   ```
-
+  
   
 
 # 联系方式|Contact
