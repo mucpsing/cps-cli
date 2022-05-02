@@ -1,7 +1,7 @@
 {
   "author": "CPS",
   "name": "@mucpsing/cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "个人自用脚手架",
   "main": "src/index.mjs",
   "module": "build/index.ems.js",
@@ -41,6 +41,6 @@
     "ora": "^6.0.1"
   },
   "engines": {
-    "node": ">=16.6.0"
+    "node": ">=16.0.0"
   }
 }
