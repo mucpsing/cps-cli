@@ -26,7 +26,8 @@ export default async ctx => {
   const display = ora();
   const orgInfo = config["org_info"];
   const orgUrl = config["org_url"];
-  let repoName = ctx.argv;
+  let repoName = ctx.argv[0];
+  let projectName = ctx.argv[1] || null;
 
   console.clear();
   log(`📦目标组织:  ${chalk.yellow.bold(orgUrl)}`);
@@ -43,7 +44,8 @@ export default async ctx => {
   }
 
   const repoUrl = `${orgInfo[repoName].namespace.html_url}/${repoName}`;
-  const projectName = await Input(`请输入项目名称:`, repoName);
+
+  if (!projectName) projectName = await Input(`请输入项目名称:`, repoName);
   const dest = path.join(process.cwd(), projectName);
 
   await ifDirExists(dest);

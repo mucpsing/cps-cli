@@ -13,7 +13,6 @@ import TemplateCommand from "./commands/template.mjs";
 import UploadCommand from "./commands/upload.mjs";
 
 // 解析参数;
-// const program = new Command();
 const options = new Command()
   .option("-t, --template [tempaletName]", "下载常用模板 .cpsrc.template")
   .option("-a, --add <script>", "添加常用工具函数 .cpsrc.add")
@@ -27,9 +26,9 @@ const options = new Command()
   const configManager = new Config();
 
   const ctx = {
-    argv: null, // {any} 对应命令所需要的参数
     configManager, // 根据入参有不同的初始化选项
     pkg,
+    argv: process.argv.slice(3, process.argv.length), // {string[]} 对应命令所需要的参数
   };
 
   let RunCommand;
@@ -37,17 +36,13 @@ const options = new Command()
 
   if (JSON.stringify(options) == "{}") {
     RunCommand = WellcomeCommand;
-  }
-
-  if (options.template) {
-    ctx.argv = options.template;
+  } else if (options.template) {
     RunCommand = TemplateCommand;
-  }
-
-  if (options.upload) {
-    ctx.argv = process.argv.slice(3, process.argv.length);
+  } else if (options.upload) {
     configInitOptions.showLog = false; // 上传插件不需要显示输出
     RunCommand = UploadCommand;
+  } else {
+    RunCommand = WellcomeCommand;
   }
 
   await ctx.configManager.init(configInitOptions);
