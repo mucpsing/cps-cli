@@ -24,31 +24,29 @@ async function userSelectRepo(selection) {
   return answer["res"];
 }
 
-export default async ({ repoName = EMPTY_STRING, config }) => {
-  repoName = ctx.ConfigManager.
+export default async ctx => {
+  const config = ctx.getConfig("template");
 
-  log(chalk.cyan.bold(`cps-cli@${pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`));
+  repoName = ctx.argv;
 
-  // let Config = await ConfigMamager();
   const display = ora();
+  const orgInfo = config["org_info"];
+  const orgUrl = config["org_url"];
 
-  const data = Config.orgInfo;
-  const org_url = Config.config["org_url"];
-
-  log(`   目标组织仓库:  ${chalk.yellow.bold(org_url)}`);
+  log(`   目标组织仓库:  ${chalk.yellow.bold(orgUrl)}`);
   log(`   当前工作目录:  ${chalk.yellow.bold(process.cwd())}`);
 
   // 没有指定仓库，列出所有仓库名称，让用户选择
   if (repoName == "" || typeof repoName == "boolean") {
-    repoName = await userSelectRepo(Object.keys(data));
+    repoName = await userSelectRepo(Object.keys(orgInfo));
   } else {
-    if (!data.hasOwnProperty(repoName)) {
+    if (!orgInfo.hasOwnProperty(repoName)) {
       log(chalk.red.bold(`没有找到相应的仓库：${repoName}，请重新选择`));
-      repoName = await userSelectRepo(Object.keys(data));
+      repoName = await userSelectRepo(Object.keys(orgInfo));
     }
   }
 
-  const repoUrl = `${data[repoName].namespace.html_url}/${repoName}`;
+  const repoUrl = `${orgInfo[repoName].namespace.html_url}/${repoName}`;
   const projectName = await Input(`请输入项目名称:`, repoName);
   const dest = path.join(process.cwd(), projectName);
 

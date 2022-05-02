@@ -15,11 +15,15 @@ import { log } from "console";
 import inquirer from "inquirer";
 import chalk from "chalk";
 
-import Tempalte from "./commands/template.mjs";
+import TempalteCommand from "./commands/template.mjs";
 
-const commands = { template: Tempalte };
+const Wellcome = async ctx => {
+  const commands = { template: TempalteCommand };
+  const config = ctx.configManager.config;
 
-const Wellcome = async () => {
+  console.clear();
+  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${config["template"]["org_modify_time"]}`));
+
   let { welcome: answers } = await inquirer.prompt([
     {
       type: "rawlist",
@@ -48,7 +52,7 @@ const Wellcome = async () => {
   ]);
 
   if (commands[answers]) {
-    commands[answers]();
+    commands[answers](ctx);
   } else {
     log(`${chalk.red("无效选择")}`);
   }

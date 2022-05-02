@@ -24,6 +24,12 @@ export class ConfigManager {
     };
   }
 
+  getConfig(key) {
+    if (this.config.hasOwnProperty(key)) {
+      return this.config[key];
+    }
+  }
+
   async init({ showLog = false }) {
     // 读取本地配置文件
     // 判断是否需要更新文件
@@ -46,7 +52,6 @@ export class ConfigManager {
   async _readFile() {
     if (fse.existsSync(this.configFilePath)) {
       this.config = await fse.readJson(this.configFilePath);
-      console.log("this.config: ", this.config);
     } else {
       this.config = await this._createFile();
     }
@@ -64,6 +69,7 @@ export class ConfigManager {
         org_path: null,
         org_add_time: this.ctime,
         org_modify_time: this.ctime,
+        org_info: {},
       },
       upload: {},
     };
