@@ -1,4 +1,4 @@
-# 简介 | Introductions
+# 简介|Introductions
 
 因为组内的项目都是我搭建的，特意写一个脚手架，可以快速生成一些项目结构，快速添加一些常用脚本到项目中。
 
@@ -13,20 +13,20 @@
 
 
 
-# 目录 | Index
+# 目录|Index
 
-1. [简介|Introductions](# 简介 | Introductions)
-2. [基础功能|Base](# 基础功能 | Base)
-3. [安装|Install](# 安装 | Install)
-4. [使用|Usage](# 使用 | Usage)
-5. [配置|Settings](# 配置 | Settings)
-6. [联系方式|contact](# 联系方式 | contact)
-
-
+1. [简介|Introductions](# 简介|Introductions)
+2. [基础功能|Base](#基础功能|Base)
+3. [安装|Install](#安装 | Install)
+4. [使用|Usage](#使用 | Usage)
+5. [配置|Settings](#配置 | Settings)
+6. [联系方式|contact](#联系方式 | contact)
 
 
 
-# 基础功能 | Base
+
+
+# 基础功能|Base
 
 - 下载仓库组织里面的项目
   - [x] electron + vue3 + vite + tailwindCSS
@@ -58,7 +58,7 @@
 
 
 
-# 安装 | Install
+# 安装|Install
 
 ```bash
 npm i -g @mucpsing/cps-cli
@@ -66,7 +66,7 @@ npm i -g @mucpsing/cps-cli
 
 
 
-# 使用 | Usage
+# 使用|Usage
 
 **基础语法：**
 
@@ -117,7 +117,7 @@ $ cps <flag> [<option1>, [<option2>]]
 
 
 
-# 配置 | Settings
+# 配置|Settings
 
 - `~/.cpsrc`
 
@@ -161,6 +161,6 @@ $ cps <flag> [<option1>, [<option2>]]
 
   
 
-# 联系方式 | contact
+# 联系方式|Contact
 
 - **373704015 (qq、wechat、email)**
