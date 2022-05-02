@@ -6,14 +6,12 @@
     <img flex="left" src="https://img.shields.io/badge/npm-%3E%3D6.x-blue"/>
     <img flex="left" src="https://img.shields.io/badge/node-%3E%3D16.11-brightgreen"/>
 </div>
-[English](README.en.md) | 简体中文
+[English](./README.en.md) | 简体中文
 
 # 安装 | Install
 
 ```bash
-npm i -g cps-cli
-
-yarn add cps-cli -g
+npm i -g @mucpsing/cps-cli
 ```
 
 
@@ -21,6 +19,7 @@ yarn add cps-cli -g
 # 使用 | Usage
 
 ```bash
+# 不添加任何参数，直接进入交互
 $ cps
 ```
 
