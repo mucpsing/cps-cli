@@ -9,7 +9,7 @@ import fse from "fs-extra";
 import Download from "../utils/gitee-download.mjs";
 import { delay, ifDirExists, Input } from "../utils/index.mjs";
 import { EMPTY_STRING } from "../env.mjs";
-import ConfigMamager from "./config.mjs";
+// import ConfigMamager from "./config.mjs";
 
 async function userSelectRepo(selection) {
   const answer = await inquirer.prompt([
@@ -24,8 +24,12 @@ async function userSelectRepo(selection) {
   return answer["res"];
 }
 
-export default async (repoName = EMPTY_STRING) => {
-  let Config = await ConfigMamager();
+export default async ({ repoName = EMPTY_STRING, config }) => {
+  repoName = ctx.ConfigManager.
+
+  log(chalk.cyan.bold(`cps-cli@${pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${ConfigManager.config.modify_time}`));
+
+  // let Config = await ConfigMamager();
   const display = ora();
 
   const data = Config.orgInfo;
@@ -39,9 +43,7 @@ export default async (repoName = EMPTY_STRING) => {
     repoName = await userSelectRepo(Object.keys(data));
   } else {
     if (!data.hasOwnProperty(repoName)) {
-      log(
-        chalk.red.bold(`没有找到相应的仓库：${repoName}，请重新选择`)
-      );
+      log(chalk.red.bold(`没有找到相应的仓库：${repoName}，请重新选择`));
       repoName = await userSelectRepo(Object.keys(data));
     }
   }
