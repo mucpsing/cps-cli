@@ -13,12 +13,13 @@ import { log } from "console";
 
 import fse from "fs-extra";
 
-export default async msg => {
+export default async ctx => {
   const temp_path = "d:\\@cps-cli.log";
+  const imgPathList = ctx.argv;
 
   await fse.ensureFile(temp_path);
-  await fse.writeFile(temp_path, msg.toString());
+  await fse.writeFile(temp_path, imgPathList.toString());
 
-  log("upload done !");
-  return msg;
+  log("upload done ! 123123");
+  return imgPathList;
 };

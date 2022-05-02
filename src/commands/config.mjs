@@ -64,7 +64,7 @@ export class ConfigManager {
     display.start(`创建配置文件...`);
     const defaultConfig = {
       template: {
-        orgName: this.orgName,
+        org_name: this.orgName,
         org_url: null,
         org_path: null,
         org_add_time: this.ctime,
@@ -128,7 +128,7 @@ export class ConfigManager {
       await fse.writeJson(this.configFilePath, config_new, { spaces: "  " });
     } else {
       // log("读取本地缓存");
-      this.config["org_info"] = await fse.readJson(this.config["template"]["org_path"]);
+      this.config["template"]["org_info"] = await fse.readJson(this.config["template"]["org_path"]);
     }
   }
 }
