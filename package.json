@@ -1,7 +1,7 @@
 {
   "author": "CPS",
   "name": "@mucpsing/cli",
-  "version": "1.4.3",
+  "version": "2.0.2",
   "description": "个人自用脚手架",
   "main": "src/index.mjs",
   "module": "build/index.ems.js",
@@ -12,8 +12,7 @@
     "cps": "src/index.mjs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "publish": "npm publish --access public"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "ISC",
