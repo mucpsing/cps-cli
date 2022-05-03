@@ -38,4 +38,4 @@ jobs:
     - name: Release This Version
       uses: softprops/action-gh-release@v1
       with:
-        token: ${{ secrets.TOKEN }}
+        token: ${{ secrets.GTH_TOKEN }}
