@@ -34,8 +34,7 @@ jobs:
       #   token: ${{secrets.NPM_TOKEN}}
       #   access: "public"
 
-
-    - name: Release This Version
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GTH_TOKEN }}
+    # - name: Release This Version
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     token: ${{ secrets.GTH_TOKEN }}
