@@ -8,9 +8,11 @@ import fse from "fs-extra";
 import { Command } from "commander/esm.mjs";
 
 import Config from "./commands/config.mjs";
-import WellcomeCommand from "./wellcome.mjs";
+import WellcomeCommand from "./commands/wellcome.mjs";
 import TemplateCommand from "./commands/template.mjs";
 import UploadCommand from "./commands/upload.mjs";
+
+import { Shell } from "./utils/shell.mjs";
 
 // 解析参数;
 const options = new Command()
@@ -28,6 +30,7 @@ const options = new Command()
   const ctx = {
     configManager, // 根据入参有不同的初始化选项
     pkg,
+    shell: Shell,
     argv: process.argv.slice(3, process.argv.length), // {string[]} 对应命令所需要的参数
   };
 
