@@ -39,8 +39,8 @@
   - [ ] bitbucket
 
 - 支持Typora上传图片
-  - [x] picgo引擎上传
-  - [ ] 搭建本地图片服务器
+  - [ ] picgo引擎上传
+  - [x] 关联到本地仓库，且自动push到远程
   - [ ] 一键批量替换`md`文件内图片链接
 
 
@@ -125,9 +125,32 @@ cps --template node-ts myProjectName
 
 
 ## -u --upload
+- 配置 `.cpsrc` 的 `upload.lcoal.path`字段，绑定本地图片仓库路径
 
-未完待续（有空再写）
+  ```
+  // ~/.cpsrc
+  {
+    "upload": {
+      "handler": "local",
+  
+      // 关联本地图片仓库，并且自动push到远程
+      "local": {
+        "auto_push":true,
+        "path": "D:/CPS/MyProject/markdown-image/image/"
+      }
+  }
+  ```
 
+  
+
+- Typora > 偏好配置 > 图像 
+  - 插入图片时： 选择"上传图片"
+  - 上传服务：  选择 "自定义命令" (Custom Command)
+  - 命令： `cps -u` 或者 `cps --upload`
+  ![](screenshot/cps@u.png)
+
+
+![](screenshot/cps@u.gif)
 
 
 # 配置|Settings
@@ -146,9 +169,16 @@ cps --template node-ts myProjectName
       "org_modify_time": "2022-05-02"
     },
     
-    // 上传配置，这里的 gitee-local 是修改自 picgo-gitee-plugin
-    // 配置跟picgo上一样
     "upload": {
+      "handler": "local",
+
+      // 关联本地图片仓库，并且自动push到远程
+      "local": {
+        "auto_push":true,
+        "path": "D:/CPS/MyProject/markdown-image/image/"
+      },
+
+      // 测试
       "picgo": {
         "picBed": {
           "uploader": "gitee-local",
