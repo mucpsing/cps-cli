@@ -78,7 +78,9 @@ export default async ctx => {
   let result = await copyImg(imgPathList, cwd);
 
   // 上传仓库
-  await gitUploadImg(ctx.shell, { cwd });
+  if (config["auto_push"] && result.length > 0) {
+    await gitUploadImg(ctx.shell, { cwd });
+  }
 
   // 打印结果给 Typora
   await TyporaResult(result);
