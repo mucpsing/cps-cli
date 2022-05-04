@@ -72,7 +72,7 @@ Options:
 
 
 
-## -t --templates
+## 1. 组织仓库快速下载|Template
 
 ### **only Command**
 
@@ -118,13 +118,12 @@ cps --template node-ts myProjectName
 
 
 
-## -a --add
-
-未完待续（有空再写）
 
 
+## 2. Typora 图片上传关联|Upload
 
-## -u --upload
+首先
+
 - 配置 `.cpsrc` 的 `upload.lcoal.path`字段，绑定本地图片仓库路径
 
   ```
