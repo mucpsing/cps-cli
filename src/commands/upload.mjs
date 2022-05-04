@@ -19,51 +19,67 @@ function Exit(code) {
   return process.exit(code);
 }
 
-export default async ctx => {
-  const temp_path = "d:\\@cps-cli.log";
-  const imgPathList = ctx.argv;
-  const config = ctx.configManager.config["upload"];
+async function gitUploadImg(shell, options) {
+  const commands = [
+    ["git", "add", "."],
+    ["git", "commit", "-m", "cps-cli-upload"],
+    ["git", "push", "origin", "master"],
+  ];
 
-  // await fse.ensureFile(temp_path);
-  // await fse.writeFile(temp_path, imgPathList.toString());
-  switch (config["handler"]) {
-    case "local":
-      // statements_1
+  for (let command of commands) {
+    await shell(command, options);
+  }
+}
 
-      const uploadConfig = config["local"];
-      const cwd = uploadConfig["path"];
-      if (!fse.lstatSync(cwd)) Exit(0);
-
-      let shellResult;
-      shellResult = await ctx.shell(["git", "pull", "origin", "master"], { cwd });
-      console.log("git pull: ", shellResult);
-      if (!shellResult.success) Exit(0);
-
-      // imgPathList.forEach(imgPath => {
-      //   const src = resolve(imgPath);
-      //   const dest = resolve(cwd, basename(imgPath));
-
-      //   if (fse.lstatSync(src)) fse.copySync(src, dest);
-      //   console.log(dest);
-      // });
-
-      shellResult = await ctx.shell(["git", "add", "."], { cwd });
-      console.log("git add: ", shellResult);
-      shellResult = await ctx.shell(["git", "commit", "-m", "cps-cli-upload"], { cwd });
-      console.log("git commit: ", shellResult);
-      shellResult = await ctx.shell(["git", "push", "origin", "master"], { cwd });
-      console.log("git push: ", shellResult);
-
-      Exit(0);
+function TyporaResult(imgList, protocol = "file") {
+  let prefix;
+  switch (protocol) {
+    case "file":
+      prefix = `file:///`;
       break;
-    case "picgo":
-
     default:
-      return;
+      prefix = `file:///`;
       break;
   }
 
-  // 复制图片到本地路径
+  console.log("Upload Success:");
+  for (let each of imgList) {
+    console.log(`${prefix}${each}`);
+  }
+}
 
-  return imgPathList;
+async function copyImg(imgList, destPath) {
+  const result = [];
+  for (let imgPath of imgList) {
+    let srcImg = resolve(imgPath);
+    let destImg = resolve(destPath, basename(imgPath));
+
+    if (fse.lstatSync(srcImg)) {
+      await fse.copy(srcImg, destImg);
+      result.push(destImg);
+    }
+  }
+
+  return result;
+}
+
+export default async ctx => {
+  const imgPathList = ctx.argv;
+  const config = ctx.configManager.config["upload"];
+  const cwd = config["local"]["path"];
+
+  // 目录校验
+  if (!fse.lstatSync(cwd)) return Exit(0);
+
+  // 更新仓库（可能需要强制同步）
+  await ctx.shell(["git", "pull", "origin", "master"], { cwd });
+
+  // 文件复制
+  let result = await copyImg(imgPathList, cwd);
+
+  // 上传仓库
+  await gitUploadImg(ctx.shell, { cwd });
+
+  // 打印结果给 Typora
+  await TyporaResult(result);
 };

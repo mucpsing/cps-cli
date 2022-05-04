@@ -12,9 +12,9 @@ export const Shell = async (commands, options = { encoding: "utf-8", windowsHide
 
     if (stdout) return { success: true, res: stdout.trim() };
 
-    if (stderr) return { success: true, res: stderr.toString() };
+    if (stderr) return { success: true, res: stderr.toString().trim() };
   } catch (e) {
-    return { success: false, err: e.toString() };
+    return { success: false, err: e.toString().trim() };
   }
 };
 
