@@ -4,12 +4,9 @@ import { log } from "console";
 import ora from "ora";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import fse from "fs-extra";
 
 import Download from "../utils/gitee-download.mjs";
 import { delay, ifDirExists, Input } from "../utils/index.mjs";
-import { EMPTY_STRING } from "../env.mjs";
-import ConfigMamager from "./config.mjs";
 
 async function userSelectRepo(selection) {
   const answer = await inquirer.prompt([
@@ -24,30 +21,31 @@ async function userSelectRepo(selection) {
   return answer["res"];
 }
 
-export default async (repoName = EMPTY_STRING) => {
-  let Config = await ConfigMamager();
+export default async ctx => {
+  const config = ctx.configManager.getConfig("template");
   const display = ora();
+  const orgInfo = config["org_info"];
+  const orgUrl = config["org_url"];
+  let repoName = ctx.argv[0];
+  let projectName = ctx.argv[1] || null;
 
-  const data = Config.orgInfo;
-  const org_url = Config.config["org_url"];
-
-  log(`   目标组织仓库:  ${chalk.yellow.bold(org_url)}`);
-  log(`   当前工作目录:  ${chalk.yellow.bold(process.cwd())}`);
+  console.clear();
+  log(`📦目标组织:  ${chalk.yellow.bold(orgUrl)}`);
+  log(`📁工作目录:  ${chalk.yellow.bold(process.cwd())}`);
 
   // 没有指定仓库，列出所有仓库名称，让用户选择
-  if (repoName == "" || typeof repoName == "boolean") {
-    repoName = await userSelectRepo(Object.keys(data));
+  if (repoName == null || repoName == "" || typeof repoName == "boolean") {
+    repoName = await userSelectRepo(Object.keys(orgInfo));
   } else {
-    if (!data.hasOwnProperty(repoName)) {
-      log(
-        chalk.red.bold(`没有找到相应的仓库：${repoName}，请重新选择`)
-      );
-      repoName = await userSelectRepo(Object.keys(data));
+    if (!orgInfo.hasOwnProperty(repoName)) {
+      log(chalk.red.bold(`没有找到相应的仓库：${repoName}，请重新选择`));
+      repoName = await userSelectRepo(Object.keys(orgInfo));
     }
   }
 
-  const repoUrl = `${data[repoName].namespace.html_url}/${repoName}`;
-  const projectName = await Input(`请输入项目名称:`, repoName);
+  const repoUrl = `${orgInfo[repoName].namespace.html_url}/${repoName}`;
+
+  if (!projectName) projectName = await Input(`请输入项目名称:`, repoName);
   const dest = path.join(process.cwd(), projectName);
 
   await ifDirExists(dest);
