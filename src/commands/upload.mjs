@@ -11,6 +11,7 @@
  */
 
 import { resolve, basename } from "path";
+import axios from "axios";
 import { log } from "console";
 
 import fse from "fs-extra";
@@ -19,7 +20,7 @@ function Exit(code) {
   return process.exit(code);
 }
 
-async function gitUploadImg(shell, options) {
+async function gitPush(shell, options) {
   const commands = [
     ["git", "add", "."],
     ["git", "commit", "-m", "cps-cli-upload"],
@@ -31,11 +32,30 @@ async function gitUploadImg(shell, options) {
   }
 }
 
-function TyporaResult(imgList, protocol = "file") {
+/**
+ * @Description - 给图片最终结果添加协议
+ *
+ * @param {string[]} imgList      {description}
+ * @param {string} protocol='file'  {description}
+ *
+ * @returns {string[]} 123123123
+ * ```js
+ * //input: c:/ccvb/test.png
+ *
+ * //output: file:///c:/ccvb/test.png
+ * ```
+ */
+function printTyporaResultFormat(imgList, protocol = "file") {
   let prefix;
   switch (protocol) {
     case "file":
       prefix = `file:///`;
+      break;
+    case "https":
+      prefix = `https:///`;
+      break;
+    case "http":
+      prefix = `http:///`;
       break;
     default:
       prefix = `file:///`;
@@ -48,6 +68,15 @@ function TyporaResult(imgList, protocol = "file") {
   }
 }
 
+/**
+ * @Description - 复制图片到 upload.local.path
+ *
+ * @param {params} imgList   - {description}
+ * @param {params} destPath  - {description}
+ *
+ * @returns {} - {description}
+ *
+ */
 async function copyImg(imgList, destPath) {
   const result = [];
   for (let imgPath of imgList) {
@@ -63,6 +92,32 @@ async function copyImg(imgList, destPath) {
   return result;
 }
 
+async function checkServer(ctx) {
+  // 测试服务器是否已经开启
+  const port = config.server.port || ctx.pkg.config.port;
+  const url = `localhost:${port}`;
+
+  try {
+    const res = await axios.get(url);
+    console.log("res: ", res);
+    if (res) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    // statements
+    return false;
+  }
+}
+
+async function localServer(imgList) {
+  res = [];
+  imgList.forEach(item => {
+    const dirname = path.dirname(item);
+  });
+}
+
 export default async ctx => {
   const imgPathList = ctx.argv;
   const config = ctx.configManager.config["upload"];
@@ -75,13 +130,18 @@ export default async ctx => {
   await ctx.shell(["git", "pull", "origin", "master"], { cwd });
 
   // 文件复制
-  let result = await copyImg(imgPathList, cwd);
+  const result = await copyImg(imgPathList, cwd);
+  if (!result.length > 0) return Exit(0);
 
   // 上传仓库
-  if (config["auto_push"] && result.length > 0) {
-    await gitUploadImg(ctx.shell, { cwd });
-  }
+  if (config["auto_push"]) await gitPush(ctx.shell, { cwd });
 
   // 打印结果给 Typora
-  await TyporaResult(result);
+  if (config["server"].enable) {
+    protocol = "http";
+  } else {
+    protocol = "file";
+  }
+
+  await printTyporaResultFormat(result, "file");
 };
