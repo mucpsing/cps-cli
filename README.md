@@ -5,9 +5,9 @@
 <div>
     <img flex="left" src="https://img.shields.io/badge/npm-%3E%3D6.x-blue"/>
     <img flex="left" src="https://img.shields.io/badge/node-%3E%3D16.11-brightgreen"/>
-  	<img flex="left" src="https://img.shields.io/github/license/caoxiemeihao/electron-vite-vue?style=flat"/>
-  	<img flex="left" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=white"/>
-  	<img flex="left" src="https://img.shields.io/badge/Sublime%20Text-FF9800?style=flat&logo=Sublime%20Text&logoColor=white"/>
+    <img flex="left" src="https://img.shields.io/github/license/caoxiemeihao/electron-vite-vue?style=flat"/>
+    <img flex="left" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=white"/>
+    <img flex="left" src="https://img.shields.io/badge/Sublime%20Text-FF9800?style=flat&logo=Sublime%20Text&logoColor=white"/>
 </div>
 [English](./README.en.md) | 简体中文
 
@@ -62,11 +62,12 @@ $ cps -h
 Usage: index [options]
 
 Options:
-  -t, --template [tempaletName]  快速下载关联的仓库组织内的项目
-  															(配置：~/.cpsrc["template"])
-  															
+  -t, --template [tempaletName]  下载常用模板 .cpsrc.template
   -a, --add <script>             添加常用工具函数 .cpsrc.add
   -u, --upload <imgPath>         上传图片到gitee/github仓库, 对应配置 .cpsrc.upload
+  -s, --server [port]            对应配置 .cpsrc.upload.server.port
+  --test [any]                   测试命令
+
   -h, --help                     display help for command
 ```
 
@@ -126,23 +127,29 @@ cps --template node-ts myProjectName
 
 - 配置 `.cpsrc` 的 `upload.lcoal.path`字段，绑定本地图片仓库路径
 
-  ```
+  ```js
   // ~/.cpsrc
   {
     "upload": {
-      "handler": "local",
-  
-      // 关联本地图片仓库，并且自动push到远程
-      "local": {
-        "auto_push":true,
-        "path": "D:/CPS/MyProject/markdown-image/image/"
+      "auto_push":true, // 上传的图片的同时push到远程
+
+      // 关联本地图片仓库目录，图片实际复制目录
+      // 比如我的图片仓库地址是： https://gitee.com/capsion/markdown-image
+      // 实际图片都是存放在 仓库的image目录下，所以本地的仓库也存在image
+      "path": "D:/CPS/MyProject/markdown-image/image/",
+
+      // 本地服务器配置
+      // 根据path的dirname会自动生成态路由： http://localhonst:port/{image}/*.png|jpg
+      "server": {
+        "enable":true,
+        "port": "45462"
       }
   }
   ```
 
-  
 
-- Typora > 偏好配置 > 图像 
+
+- Typora > 偏好配置 > 图像
   - 插入图片时： 选择"上传图片"
   - 上传服务：  选择 "自定义命令" (Custom Command)
   - 命令： `cps -u` 或者 `cps --upload`
@@ -167,45 +174,30 @@ cps --template node-ts myProjectName
       "org_add_time": "2022-04-05",
       "org_modify_time": "2022-05-02"
     },
-    
     "upload": {
-      "handler": "local",
-
-      // 关联本地图片仓库，并且自动push到远程
-      "local": {
-        "auto_push":true,
-        "path": "D:/CPS/MyProject/markdown-image/image/"
-      },
-
-      // 测试
-      "picgo": {
-        "picBed": {
-          "uploader": "gitee-local",
-          "current": "gitee-local",
-          "gitee-local": { // 对应 picgo-gitee-plugin 的配置
-            "owner": "capsion",	
-            "repo": "markdown-image",
-            "path": "image",
-            "token": "{your gitee token}",
-            "message": "cps-cli upload"
-          }
-        }
+      "auto_push":true,
+      "path": "D:/CPS/MyProject/markdown-image/image/",
+      "server":{
+        "enable":true, // 开启本地服务期，返回 http://127.0.0.1/xxxx/*.png 图片格式
+        "port":"45462"
       }
     }
   }
   ```
 
-  
+
 
 - `~/.cpsrc.org_info`
 
   仓库组织的离线数据缓存，因为**gitee**获取组织仓库的**Api**有每日请求次数限制，所以每天只拉取一次线上数据，然后缓存到本地，以`json`格式存储。
-  
-  
-  
+
+
+
   ```js
-  // https://gitee.com/api/v5/orgs/${org_name}/repos
-  {...org_info}
+  // 接口： https://gitee.com/api/v5/orgs/${org_name}/repos 返回的json数据结果：
+  {
+    ...each_repo_name:{ ../ }
+  }
   ```
   
   
