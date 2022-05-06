@@ -50,7 +50,7 @@
 # 安装|Install
 
 ```bash
-npm i -g @mucpsing/cps-cli
+npm i -g @mucpsing/cli
 ```
 
 
