@@ -14,6 +14,8 @@ import path from "path";
 import { log } from "console";
 import child_process from "child_process";
 
+import { delay } from "../utils/index.mjs";
+
 import fse from "fs-extra";
 import axios from "axios";
 
@@ -75,7 +77,11 @@ function printTyporaResult(imgList, msg = "Upload Success:") {
   }
 }
 
-function convertHttpProtocol(contextList, url = "lcoalhost:3000", protocol = "http") {
+function convertHttpProtocol(
+  contextList,
+  url = "lcoalhost:3000",
+  protocol = "http"
+) {
   const result = [];
   contextList.forEach(item => {
     const filename = path.basename(item);
@@ -106,7 +112,7 @@ async function checkUrl(baseURL) {
       return false;
     }
   } catch (e) {
-    console.log("e: ", e);
+    // console.log("e: ", e);
     // statements
     return false;
   }
@@ -118,7 +124,7 @@ export default async ctx => {
   const cwd = config["local"]["path"];
 
   // 目录校验
-  if (!fse.lstatSync(cwd)) return Exit(0);
+  if (!fse.existsSync(cwd)) return Exit(0);
 
   // 更新仓库（可能需要强制同步）
   await ctx.shell(["git", "pull", "origin", "master"], { cwd });
@@ -135,9 +141,16 @@ export default async ctx => {
     const port = config.server["port"] || ctx.pkg.config["port"];
     const url = `localhost:${port}`;
     const hasLocalServer = await checkUrl(`http://${url}`);
+
+    // start server with alone
     if (!hasLocalServer) {
-      console.log(NO_SERVER_MSG);
-      child_process.exec("cps -s");
+      child_process
+        .spawn("cps", ["-s"], {
+          shell: true,
+          detached: true,
+          stdio: "ignore",
+        })
+        .unref();
     }
 
     imgList = convertHttpProtocol(result, url);
@@ -146,5 +159,6 @@ export default async ctx => {
   }
 
   await printTyporaResult(imgList);
+  Exit(0);
   // if (!hasLocalServer) await serverStart({ staticPath: cwd, port });
 };
