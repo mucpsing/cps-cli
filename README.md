@@ -23,6 +23,29 @@
 6. [联系方式|contact](#联系方式|contact)
 
 
+# 安装|Install
+
+```bash
+npm i -g @mucpsing/cli
+```
+
+
+
+# 使用|Usage
+
+```bash
+$ cps -h
+Usage: index [options]
+
+Options:
+  -t, --template [tempaletName]  下载常用模板 .cpsrc.template
+  -a, --add <script>             添加常用工具函数 .cpsrc.add
+  -u, --upload <imgPath>         上传图片到gitee/github仓库, 对应配置 .cpsrc.upload
+  -s, --server [port]            对应配置 .cpsrc.upload.server.port
+  --test [any]                   测试命令
+
+  -h, --help                     display help for command
+```
 
 ## 主要功能|Base
 
@@ -44,32 +67,6 @@
   - [ ] 一键批量替换`md`文件内图片链接
 
 
-
-
-
-# 安装|Install
-
-```bash
-npm i -g @mucpsing/cps-cli
-```
-
-
-
-# 使用|Usage
-
-```bash
-$ cps -h
-Usage: index [options]
-
-Options:
-  -t, --template [tempaletName]  下载常用模板 .cpsrc.template
-  -a, --add <script>             添加常用工具函数 .cpsrc.add
-  -u, --upload <imgPath>         上传图片到gitee/github仓库, 对应配置 .cpsrc.upload
-  -s, --server [port]            对应配置 .cpsrc.upload.server.port
-  --test [any]                   测试命令
-
-  -h, --help                     display help for command
-```
 
 
 
