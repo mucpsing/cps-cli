@@ -5,7 +5,7 @@ const exec = promisify(child_process.exec);
 
 const Commands = ["npm", "-v"];
 
-export const Shell = async (
+export const shell = async (
   commands,
   options = { encoding: "utf-8", windowsHide: true, cwd: undefined }
 ) => {
@@ -22,12 +22,43 @@ export const Shell = async (
   }
 };
 
-export const runCommandAlone = commands => {
-  child_process.spawn(commands[0], commands.slice(1), {
+export const runCommandAlone = async (commands, options) => {
+  child_process.spawn(commands, [], {
     shell: true,
     detached: true,
     stdio: "ignore",
+    ...options,
   });
 };
 
-export default Shell;
+export const gitPush = async cwd => {
+  let commands =
+    "git add . & git commit -m cps-cli-push & git push origin master";
+  return await runCommandAlone(commands, {
+    cwd,
+    windowsHide: true,
+  });
+};
+
+export const gitPushSync = async cwd => {
+  let commands = [
+    ["git", "add", "."],
+    ["git", "commit", "-m", "cps-cli-push"],
+    ["git", "push", "origin", "master"],
+  ];
+
+  for (let command of commands) {
+    await shell(command, { cwd });
+  }
+};
+
+export const gitPull = async cwd => {
+  let commands = ["git", "pull", "origin", "master"];
+  return await shell(commands, { cwd });
+};
+
+// export const runServerAlone = async () => {
+//   let commands = "cps -s";
+
+//   return await runCommandAlone(commands);
+// };

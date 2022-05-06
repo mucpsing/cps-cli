@@ -12,26 +12,35 @@ import UploadCommand from "./commands/upload.mjs";
 import ServerCommand from "./commands/Server.mjs";
 import TestCommand from "./commands/test.mjs";
 
-import { Shell } from "./utils/shell.mjs";
+import * as utils from "./utils/index.mjs";
 
 // 解析参数;
 const options = new Command()
-  .option("-t, --template [tempaletName]", "下载常用模板 .cpsrc.template")
+  .option(
+    "-t, --template [tempaletName]",
+    "下载常用模板 .cpsrc.template"
+  )
   .option("-a, --add <script>", "添加常用工具函数 .cpsrc.add")
-  .option("-u, --upload <imgPath>", "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload")
-  .option("-s, --server [port]", "port:.cpsrc.upload.server.port static:.cpsrc.upload.local.path")
+  .option(
+    "-u, --upload <imgPath>",
+    "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload"
+  )
+  .option("-s, --server [port]", "对应配置 .cpsrc.upload.server")
   .option("--test [any]", "测试命令")
   .parse()
   .opts();
 
 (async () => {
-  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
+  const pkgPath = path.resolve(
+    path.dirname(process.argv[1]),
+    "../package.json"
+  );
   const configManager = new Config();
 
   const ctx = {
     configManager, // 根据入参有不同的初始化选项
     pkg: fse.readJSONSync(pkgPath),
-    shell: Shell,
+    utils,
     argv: process.argv.slice(3, process.argv.length), // {string[]} 对应命令所需要的参数
   };
 

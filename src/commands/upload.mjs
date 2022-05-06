@@ -11,27 +11,10 @@
  */
 
 import path from "path";
-
 import fse from "fs-extra";
-
-import { checkUrl, runServerAlone } from "../utils/index.mjs";
 
 function Exit(code) {
   return process.exit(code);
-}
-
-async function gitPush(ctx) {
-  const cwd = config["local"]["path"];
-
-  const commands = [
-    ["git", "add", "."],
-    ["git", "commit", "-m", "cps-cli-upload"],
-    ["git", "push", "origin", "master"],
-  ];
-
-  for (let command of commands) {
-    await ctx.shell(command, { cwd });
-  }
 }
 
 /**
@@ -95,29 +78,30 @@ function convertFileProtocol(contextList) {
 export default async ctx => {
   const imgPathList = ctx.argv;
   const config = ctx.configManager.getConfig("upload");
-  const cwd = config["local"]["path"];
+  const cwd = config["path"];
 
   // 目录校验
   if (!fse.existsSync(cwd)) return Exit(0);
 
   // 更新仓库（可能需要强制同步）
-  await ctx.shell(["git", "pull", "origin", "master"], { cwd });
+  await ctx.utils.gitPull(cwd);
 
   // 文件复制
   const result = await copyImg(imgPathList, cwd);
   if (!result.length > 0) return Exit(0);
 
   // 上传仓库
-  if (config["auto_push"]) await gitPush(ctx);
+  // if (config["auto_push"]) await ctx.utils.gitPush(cwd);
+  if (config["auto_push"]) await ctx.utils.gitPushSync(cwd);
 
   let imgList = [];
-  if (config["server"].enable) {
+  if (config.server["enable"]) {
     const port = config.server["port"] || ctx.pkg.config["port"];
     const url = `localhost:${port}`;
-    const hasLocalServer = await checkUrl(`http://${url}`);
+    const hasLocalServer = await ctx.utils.checkUrl(`http://${url}`);
 
-    // start server with alone
-    if (!hasLocalServer) await runServerAlone();
+    // 独立子进程开启服务器
+    if (!hasLocalServer) await ctx.utils.runCommandAlone("cps -s");
 
     imgList = convertHttpProtocol(result, url);
   } else {

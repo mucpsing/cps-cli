@@ -6,6 +6,9 @@ import fse from "fs-extra";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import moment from "moment";
+import axios from "axios";
+
+export * from "./shell.mjs";
 
 export const delay = (time = 1000) =>
   new Promise(resolve => setTimeout(resolve, time));
@@ -78,9 +81,10 @@ export const Input = async (msg, defaultRes = "") => {
  *
  */
 export const checkUrl = async baseURL => {
-  axios.defaults.baseURL = baseURL;
+  const newAxios = axios.create({ baseURL });
+  // axios.defaults.baseURL = baseURL;
   try {
-    const res = await axios.get("/", { timeout: 1000 });
+    const res = await newAxios.get("/", { timeout: 1000 });
     // console.log("res: ", res);
     if (res) {
       return true;
@@ -122,16 +126,6 @@ function check_type_by_typeof(target) {
   return typeof target;
 }
 
-export const runServerAlone = async () => {
-  child_process
-    .spawn("cps", ["-s"], {
-      shell: true,
-      detached: true,
-      stdio: "ignore",
-    })
-    .unref();
-};
-
 // export const inputSelect = async selection => {
 //   const title = "template";
 //   const answer = await inquirer.prompt([
@@ -145,4 +139,8 @@ export const runServerAlone = async () => {
 //   ]);
 
 //   return answer[title];
+// };
+
+// export default {
+//   ...shell,
 // };
