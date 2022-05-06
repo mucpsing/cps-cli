@@ -1,8 +1,6 @@
 import axios from "axios";
 
-axios.defaults.timeout = 50000;
-
-export const parserOrgInfo = async res => {
+export const parserOrgInfo = res => {
   const { data } = res;
   const result = {};
 
@@ -14,22 +12,28 @@ export const parserOrgInfo = async res => {
 };
 
 export const getOrgInfo = async org_name => {
-  const url = `https://gitee.com/api/v5/orgs/${org_name}/repos`;
+  const giteeAxios = axios.create({
+    timeout: 10000,
+    baseURL: `https://gitee.com`,
+  });
 
   try {
-    const res = await axios(url);
-    const ret = await parserOrgInfo(res);
+    // const res = await axios(url);
+    const res = await giteeAxios.get(
+      `/api/v5/orgs/${org_name}/repos`
+    );
+    const ret = parserOrgInfo(res);
     const orgUrl = res.data[0].namespace.html_url;
 
     return { success: true, data: ret, url: orgUrl };
   } catch (err) {
-    console.log("网络请求错误： ");
+    console.log("gitee-api: 网络请求错误");
     console.error(err);
     return { success: false, data: err };
   }
 };
 
-// 测试函数
+// tset
 // (async () => {
 //   const ORG_NAME = "cps-cli-template";
 //   const res = await getOrgInfo(ORG_NAME);
