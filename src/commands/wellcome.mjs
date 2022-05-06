@@ -15,10 +15,12 @@ import { log } from "console";
 import inquirer from "inquirer";
 import chalk from "chalk";
 
-import TempalteCommand from "./template.mjs";
+import template from "./template.mjs";
+import server from "./server.mjs";
+import test from "./test.mjs";
 
 const Wellcome = async ctx => {
-  const commands = { template: TempalteCommand };
+  const commands = { template, server, test };
   const config = ctx.configManager.config;
 
   console.clear();
@@ -31,6 +33,10 @@ const Wellcome = async ctx => {
       message: `${chalk.bgGreen("选择功能")}: (Use arrow keys)`,
       choices: [
         {
+          name: "开启本地静态服务器",
+          value: "server",
+        },
+        {
           name: "常用项目模板下载",
           value: "template",
         },
@@ -41,6 +47,10 @@ const Wellcome = async ctx => {
         {
           name: "自定义",
           value: "config",
+        },
+        {
+          name: "测试",
+          value: "test",
         },
         {
           name: "帮助",

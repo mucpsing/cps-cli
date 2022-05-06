@@ -10,17 +10,22 @@
  * @Description: 功能描述
  */
 
-import { resolve, basename } from "path";
-import axios from "axios";
+import path from "path";
 import { log } from "console";
+import child_process from "child_process";
 
 import fse from "fs-extra";
+import axios from "axios";
+
+const NO_SERVER_MSG = `[Warning !!]\nLocalServer Is Not Alive\nUse "cps -s" or "cps --server"\nTo Run A New Server\n`;
 
 function Exit(code) {
   return process.exit(code);
 }
 
-async function gitPush(shell, options) {
+async function gitPush(ctx) {
+  const cwd = config["local"]["path"];
+
   const commands = [
     ["git", "add", "."],
     ["git", "commit", "-m", "cps-cli-upload"],
@@ -28,60 +33,18 @@ async function gitPush(shell, options) {
   ];
 
   for (let command of commands) {
-    await shell(command, options);
-  }
-}
-
-/**
- * @Description - 给图片最终结果添加协议
- *
- * @param {string[]} imgList      {description}
- * @param {string} protocol='file'  {description}
- *
- * @returns {string[]} 123123123
- * ```js
- * //input: c:/ccvb/test.png
- *
- * //output: file:///c:/ccvb/test.png
- * ```
- */
-function printTyporaResultFormat(imgList, protocol = "file") {
-  let prefix;
-  switch (protocol) {
-    case "file":
-      prefix = `file:///`;
-      break;
-    case "https":
-      prefix = `https:///`;
-      break;
-    case "http":
-      prefix = `http:///`;
-      break;
-    default:
-      prefix = `file:///`;
-      break;
-  }
-
-  console.log("Upload Success:");
-  for (let each of imgList) {
-    console.log(`${prefix}${each}`);
+    await ctx.shell(command, { cwd });
   }
 }
 
 /**
  * @Description - 复制图片到 upload.local.path
- *
- * @param {params} imgList   - {description}
- * @param {params} destPath  - {description}
- *
- * @returns {} - {description}
- *
  */
 async function copyImg(imgList, destPath) {
   const result = [];
   for (let imgPath of imgList) {
-    let srcImg = resolve(imgPath);
-    let destImg = resolve(destPath, basename(imgPath));
+    let srcImg = path.resolve(imgPath);
+    let destImg = path.resolve(destPath, path.basename(imgPath));
 
     if (fse.lstatSync(srcImg)) {
       await fse.copy(srcImg, destImg);
@@ -92,30 +55,61 @@ async function copyImg(imgList, destPath) {
   return result;
 }
 
-async function checkServer(ctx) {
-  // 测试服务器是否已经开启
-  const port = config.server.port || ctx.pkg.config.port;
-  const url = `localhost:${port}`;
+/**
+ * @Description - 打印符合Typora格式的结果
+ *
+ * @param {params} imgList  - {description}
+ *
+ * ```text
+ * Upload Success:
+ * http://localhost:3000/ccvb/test.png
+ * file:///c:/ccvb/test.png
+ * ```
+ */
+function printTyporaResult(imgList, msg = "Upload Success:") {
+  if (imgList.length > 0) {
+    console.log(msg);
+    for (let each of imgList) {
+      console.log(`${each}`);
+    }
+  }
+}
 
+function convertHttpProtocol(contextList, url = "lcoalhost:3000", protocol = "http") {
+  const result = [];
+  contextList.forEach(item => {
+    const filename = path.basename(item);
+    const staticRoute = path.basename(path.dirname(item));
+
+    result.push(`${protocol}://${url}/${staticRoute}/${filename}`);
+  });
+  return result;
+}
+
+function convertFileProtocol(contextList) {
+  const result = [];
+  let prefix = `file:///`;
+  contextList.forEach(item => {
+    result.push(`${prefix}${item}`);
+  });
+  return result;
+}
+
+async function checkUrl(baseURL) {
+  axios.defaults.baseURL = baseURL;
   try {
-    const res = await axios.get(url);
-    console.log("res: ", res);
+    const res = await axios.get("/", { timeout: 1000 });
+    // console.log("res: ", res);
     if (res) {
       return true;
     } else {
       return false;
     }
   } catch (e) {
+    console.log("e: ", e);
     // statements
     return false;
   }
-}
-
-async function localServer(imgList) {
-  res = [];
-  imgList.forEach(item => {
-    const dirname = path.dirname(item);
-  });
 }
 
 export default async ctx => {
@@ -134,14 +128,23 @@ export default async ctx => {
   if (!result.length > 0) return Exit(0);
 
   // 上传仓库
-  if (config["auto_push"]) await gitPush(ctx.shell, { cwd });
+  if (config["auto_push"]) await gitPush(ctx);
 
-  // 打印结果给 Typora
+  let imgList = [];
   if (config["server"].enable) {
-    protocol = "http";
+    const port = config.server["port"] || ctx.pkg.config["port"];
+    const url = `localhost:${port}`;
+    const hasLocalServer = await checkUrl(`http://${url}`);
+    if (!hasLocalServer) {
+      console.log(NO_SERVER_MSG);
+      child_process.exec("cps -s");
+    }
+
+    imgList = convertHttpProtocol(result, url);
   } else {
-    protocol = "file";
+    imgList = convertFileProtocol(reslut);
   }
 
-  await printTyporaResultFormat(result, "file");
+  await printTyporaResult(imgList);
+  // if (!hasLocalServer) await serverStart({ staticPath: cwd, port });
 };
