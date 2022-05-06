@@ -11,15 +11,10 @@
  */
 
 import path from "path";
-import { log } from "console";
-import child_process from "child_process";
-
-import { delay } from "../utils/index.mjs";
 
 import fse from "fs-extra";
-import axios from "axios";
 
-const NO_SERVER_MSG = `[Warning !!]\nLocalServer Is Not Alive\nUse "cps -s" or "cps --server"\nTo Run A New Server\n`;
+import { checkUrl, runServerAlone } from "../utils/index.mjs";
 
 function Exit(code) {
   return process.exit(code);
@@ -77,11 +72,7 @@ function printTyporaResult(imgList, msg = "Upload Success:") {
   }
 }
 
-function convertHttpProtocol(
-  contextList,
-  url = "lcoalhost:3000",
-  protocol = "http"
-) {
+function convertHttpProtocol(contextList, url, protocol = "http") {
   const result = [];
   contextList.forEach(item => {
     const filename = path.basename(item);
@@ -101,26 +92,9 @@ function convertFileProtocol(contextList) {
   return result;
 }
 
-async function checkUrl(baseURL) {
-  axios.defaults.baseURL = baseURL;
-  try {
-    const res = await axios.get("/", { timeout: 1000 });
-    // console.log("res: ", res);
-    if (res) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (e) {
-    // console.log("e: ", e);
-    // statements
-    return false;
-  }
-}
-
 export default async ctx => {
   const imgPathList = ctx.argv;
-  const config = ctx.configManager.config["upload"];
+  const config = ctx.configManager.getConfig("upload");
   const cwd = config["local"]["path"];
 
   // 目录校验
@@ -143,22 +117,13 @@ export default async ctx => {
     const hasLocalServer = await checkUrl(`http://${url}`);
 
     // start server with alone
-    if (!hasLocalServer) {
-      child_process
-        .spawn("cps", ["-s"], {
-          shell: true,
-          detached: true,
-          stdio: "ignore",
-        })
-        .unref();
-    }
+    if (!hasLocalServer) await runServerAlone();
 
     imgList = convertHttpProtocol(result, url);
   } else {
     imgList = convertFileProtocol(reslut);
   }
 
-  await printTyporaResult(imgList);
+  printTyporaResult(imgList);
   Exit(0);
-  // if (!hasLocalServer) await serverStart({ staticPath: cwd, port });
 };

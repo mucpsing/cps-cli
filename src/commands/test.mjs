@@ -1,5 +1,9 @@
-import child_process from "child_process";
+// import child_process from "child_process";
+import { log } from "console";
 
-export default async () => {
-  child_process.exec("cps -s");
+import chalk from "chalk";
+
+export default async ctx => {
+  log(chalk.bold.green(`test command`));
+  // child_process.exec("cps -s");
 };

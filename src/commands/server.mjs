@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { serverStart } from "../utils/server.mjs";
 
 export default async ctx => {
-  const config = ctx.configManager.config["upload"];
+  const config = ctx.configManager.getConfig("upload");
   const port = config.server["port"] || ctx.pkg.config["port"];
   const cwd = config["local"]["path"];
 

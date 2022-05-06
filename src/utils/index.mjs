@@ -1,4 +1,5 @@
 import path from "path";
+import child_process from "child_process";
 import { log } from "console";
 
 import fse from "fs-extra";
@@ -66,6 +67,33 @@ export const Input = async (msg, defaultRes = "") => {
   return res;
 };
 
+/**
+ * @Description - 检查一个url
+ *
+ * @param {params} baseURL  - {description}
+ *
+ * ```js
+ * const canUse = await checkUrl('http://localhost:3000'):boolean
+ * ```
+ *
+ */
+export const checkUrl = async baseURL => {
+  axios.defaults.baseURL = baseURL;
+  try {
+    const res = await axios.get("/", { timeout: 1000 });
+    // console.log("res: ", res);
+    if (res) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    // console.log("e: ", e);
+    // statements
+    return false;
+  }
+};
+
 function check_type_by_prototype(target) {
   // 'number'
   // 'string'
@@ -93,6 +121,16 @@ function check_type_by_typeof(target) {
 
   return typeof target;
 }
+
+export const runServerAlone = async () => {
+  child_process
+    .spawn("cps", ["-s"], {
+      shell: true,
+      detached: true,
+      stdio: "ignore",
+    })
+    .unref();
+};
 
 // export const inputSelect = async selection => {
 //   const title = "template";

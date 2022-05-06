@@ -24,7 +24,13 @@ const Wellcome = async ctx => {
   const config = ctx.configManager.config;
 
   console.clear();
-  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${config["template"]["org_modify_time"]}`));
+  log(
+    chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`),
+    " --- ",
+    chalk.yellow.bold(
+      `最后更新: ${config["template"]["org_modify_time"]}`
+    )
+  );
 
   let { welcome: answers } = await inquirer.prompt([
     {
@@ -32,10 +38,6 @@ const Wellcome = async ctx => {
       name: "welcome",
       message: `${chalk.bgGreen("选择功能")}: (Use arrow keys)`,
       choices: [
-        {
-          name: "开启本地静态服务器",
-          value: "server",
-        },
         {
           name: "常用项目模板下载",
           value: "template",
@@ -45,8 +47,8 @@ const Wellcome = async ctx => {
           value: "add",
         },
         {
-          name: "自定义",
-          value: "config",
+          name: "开启本地静态服务器",
+          value: "server",
         },
         {
           name: "测试",
