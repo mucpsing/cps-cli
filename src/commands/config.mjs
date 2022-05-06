@@ -7,14 +7,8 @@ import { EMPTY_STRING } from "../env.mjs";
 import { getOrgInfo } from "../utils/gitee-api.mjs";
 import { currtTime, delay } from "../utils/index.mjs";
 
-const DEFAULT_CONFIG_FILE_PATH = `${path.join(
-  process.env.USERPROFILE,
-  ".cpsrc"
-)}`;
-const DEFAULT_ORG_FILE_PATH = `${path.join(
-  process.env.USERPROFILE,
-  ".cpsrc.org_info"
-)}`;
+const DEFAULT_CONFIG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc")}`;
+const DEFAULT_ORG_FILE_PATH = `${path.join(process.env.USERPROFILE, ".cpsrc.org_info")}`;
 const DEFAULT_ORG_NAME = "cps-cli-template";
 
 export class ConfigManager {
@@ -43,9 +37,7 @@ export class ConfigManager {
       const display = ora();
       display.start(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件...`);
       await this._readFile();
-      display.succeed(
-        `读取${DEFAULT_CONFIG_FILE_PATH}配置文件 完成！`
-      );
+      display.succeed(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件 完成！`);
       await delay(500);
       display.start("正在读取缓存数据...");
       await this._readOrgFile();
@@ -79,7 +71,14 @@ export class ConfigManager {
         org_modify_time: this.ctime,
         org_info: {},
       },
-      upload: {},
+      upload: {
+        path: "",
+        auto_push: true,
+        server: {
+          port: 45462,
+          enable: false,
+        },
+      },
     };
 
     try {
@@ -96,15 +95,10 @@ export class ConfigManager {
   }
 
   async _getOrgInfo(orgName = EMPTY_STRING) {
-    orgName =
-      orgName ||
-      this.config["template"]["org_name"] ||
-      DEFAULT_ORG_NAME;
+    orgName = orgName || this.config["template"]["org_name"] || DEFAULT_ORG_NAME;
 
     // this.display.start("获取远程组织仓库信息...");
-    const { success, data, err, url } = await getOrgInfo(
-      this.orgName
-    );
+    const { success, data, err, url } = await getOrgInfo(this.orgName);
     if (!success) {
       console.error(err);
       this.display.fail("获取组织信息失败");
@@ -117,30 +111,20 @@ export class ConfigManager {
 
   async _readOrgFile() {
     const hasOrgInfo = !!this.config["template"]["org_path"];
-    if (hasOrgInfo)
-      this.config["template"]["info_path"] = DEFAULT_ORG_FILE_PATH;
+    if (hasOrgInfo) this.config["template"]["info_path"] = DEFAULT_ORG_FILE_PATH;
 
-    const orgInfoFileExist = !fse.existsSync(
-      this.config["template"]["org_path"]
-    );
-    if (orgInfoFileExist)
-      await fse.ensureFile(this.config["template"]["org_path"]);
+    const orgInfoFileExist = !fse.existsSync(this.config["template"]["org_path"]);
+    if (orgInfoFileExist) await fse.ensureFile(this.config["template"]["org_path"]);
 
-    const isSameModifyTime =
-      this.config["template"]["org_modify_time"] == this.ctime;
+    const isSameModifyTime = this.config["template"]["org_modify_time"] == this.ctime;
 
-    const needUpdate =
-      hasOrgInfo || orgInfoFileExist || !isSameModifyTime;
+    const needUpdate = hasOrgInfo || orgInfoFileExist || !isSameModifyTime;
     if (needUpdate) {
       // log("获取线上数据");
       const { url, data: org_info_new } = await this._getOrgInfo();
 
       this.config["template"]["org_info"] = org_info_new;
-      await fse.writeJson(
-        this.config["template"]["org_path"],
-        org_info_new,
-        { spaces: "  " }
-      );
+      await fse.writeJson(this.config["template"]["org_path"], org_info_new, { spaces: "  " });
 
       this.config["template"]["org_modify_time"] = this.ctime;
       this.config["template"]["org_url"] = url;
@@ -153,9 +137,7 @@ export class ConfigManager {
       });
     } else {
       // log("读取本地缓存");
-      this.config["template"]["org_info"] = await fse.readJson(
-        this.config["template"]["org_path"]
-      );
+      this.config["template"]["org_info"] = await fse.readJson(this.config["template"]["org_path"]);
     }
   }
 }
