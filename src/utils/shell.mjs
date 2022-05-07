@@ -5,18 +5,14 @@ const exec = promisify(child_process.exec);
 
 const Commands = ["npm", "-v"];
 
-export const shell = async (
-  commands,
-  options = { encoding: "utf-8", windowsHide: true, cwd: undefined }
-) => {
+export const shell = async (commands, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
   commands = commands.join(" ");
   try {
     const { stdout, stderr } = await exec(commands, options);
 
     if (stdout) return { success: true, res: stdout.trim() };
 
-    if (stderr)
-      return { success: true, res: stderr.toString().trim() };
+    if (stderr) return { success: true, res: stderr.toString().trim() };
   } catch (e) {
     return { success: false, err: e.toString().trim() };
   }
@@ -32,8 +28,7 @@ export const runCommandAlone = async (commands, options) => {
 };
 
 export const gitPush = async cwd => {
-  let commands =
-    "git add . & git commit -m cps-cli-push & git push origin master";
+  let commands = "git add . & git commit -m cps-cli-push & git push origin master";
   return await runCommandAlone(commands, {
     cwd,
     windowsHide: true,
@@ -53,8 +48,14 @@ export const gitPushSync = async cwd => {
 };
 
 export const gitPull = async cwd => {
-  let commands = ["git", "pull", "origin", "master"];
-  return await shell(commands, { cwd });
+  let commands = [
+    ["git", "add", "."],
+    ["git", "commit", "-m", "cps-cli-before-pull"],
+    ["git", "pull", "origin", "master"],
+  ];
+  for (let command of commands) {
+    await shell(command, { cwd });
+  }
 };
 
 // export const runServerAlone = async () => {
