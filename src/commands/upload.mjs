@@ -13,6 +13,8 @@
 import path from "path";
 import fse from "fs-extra";
 
+import axios from "axios";
+
 function Exit(code) {
   return process.exit(code);
 }
@@ -55,13 +57,13 @@ function printTyporaResult(imgList, msg = "Upload Success:") {
   }
 }
 
-function convertHttpProtocol(contextList, url, protocol = "http") {
+function convertHttpProtocol(contextList, url) {
   const result = [];
   contextList.forEach(item => {
     const filename = path.basename(item);
     const staticRoute = path.basename(path.dirname(item));
 
-    result.push(`${protocol}://${url}/${staticRoute}/${filename}`);
+    result.push(`${url}/${staticRoute}/${filename}`);
   });
   return result;
 }
@@ -88,20 +90,20 @@ export default async ctx => {
 
   // 文件复制
   const result = await copyImg(imgPathList, cwd);
+
   if (!result.length > 0) return Exit(0);
 
   // 上传仓库
-  // if (config["auto_push"]) await ctx.utils.gitPush(cwd);
   if (config["auto_push"]) await ctx.utils.gitPushSync(cwd);
 
   let imgList = [];
   if (config.server["enable"]) {
     const port = config.server["port"] || ctx.pkg.config["port"];
-    const url = `localhost:${port}`;
-    const hasLocalServer = await ctx.utils.checkUrl(`http://${url}`);
+    const url = `http://localhost:${port}`;
+    const hasLocalServer = await ctx.utils.checkUrl(url);
 
     // 独立子进程开启服务器
-    if (!hasLocalServer) await ctx.utils.runCommandAlone("cps -s");
+    if (!hasLocalServer) ctx.utils.runCommandAlone("cps -s");
 
     imgList = convertHttpProtocol(result, url);
   } else {

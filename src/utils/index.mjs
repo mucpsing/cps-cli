@@ -10,8 +10,7 @@ import axios from "axios";
 
 export * from "./shell.mjs";
 
-export const delay = (time = 1000) =>
-  new Promise(resolve => setTimeout(resolve, time));
+export const delay = (time = 1000) => new Promise(resolve => setTimeout(resolve, time));
 
 export const __dirname = () => path.dirname(import.meta.url);
 
@@ -26,9 +25,7 @@ export const ifDirExists = async filePath => {
       {
         name: "overwrite",
         type: "confirm",
-        message: chalk.yellow.bold(
-          `目标目录./${basename}/已存在，是否覆盖？`
-        ),
+        message: chalk.yellow.bold(`目标目录./${basename}/已存在，是否覆盖？`),
         default: false,
       },
     ]);
@@ -80,20 +77,14 @@ export const Input = async (msg, defaultRes = "") => {
  * ```
  *
  */
-export const checkUrl = async baseURL => {
-  const newAxios = axios.create({ baseURL });
-  // axios.defaults.baseURL = baseURL;
+export const checkUrl = async (url, data) => {
   try {
-    const res = await newAxios.get("/", { timeout: 1000 });
-    // console.log("res: ", res);
-    if (res) {
-      return true;
-    } else {
-      return false;
-    }
+    const res = await axios({ method: "post", url, timeout: 1000 });
+
+    if (res) return true;
+
+    return false;
   } catch (e) {
-    // console.log("e: ", e);
-    // statements
     return false;
   }
 };
@@ -107,11 +98,7 @@ function check_type_by_prototype(target) {
   // 'undefined'
   // 'boolean'
 
-  return Object.prototype.toString
-    .call(target)
-    .toLowerCase()
-    .replace("[object ", "")
-    .replace("]", "");
+  return Object.prototype.toString.call(target).toLowerCase().replace("[object ", "").replace("]", "");
 }
 
 function check_type_by_typeof(target) {
