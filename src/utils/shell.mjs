@@ -8,7 +8,7 @@ const Commands = ["npm", "-v"];
 export const shell = async (commands, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
   commands = commands.join(" ");
   try {
-    const { stdout, stderr } = await exec(commands, options);
+    const { stdout, stderr } = await exec(commands, { ...options });
 
     if (stdout) return { success: true, res: stdout.trim() };
 
