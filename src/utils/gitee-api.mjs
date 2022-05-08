@@ -26,7 +26,7 @@ export const getOrgInfo = async org_name => {
     return { success: true, data: ret, url: orgUrl };
   } catch (err) {
     console.log("gitee-api: 网络请求错误");
-    console.log(err);
+    // console.log(err);
     return { success: false, data: err };
   }
 };

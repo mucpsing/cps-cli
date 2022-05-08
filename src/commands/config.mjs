@@ -1,4 +1,5 @@
 import path from "path";
+import { log } from "console";
 
 import fse from "fs-extra";
 import ora from "ora";
@@ -100,7 +101,7 @@ export class ConfigManager {
     // this.display.start("获取远程组织仓库信息...");
     const { success, data, err, url } = await getOrgInfo(this.orgName);
     if (!success) {
-      console.error(err);
+      // console.error(err);
       this.display.fail("获取组织信息失败");
       return false;
     }
@@ -119,26 +120,29 @@ export class ConfigManager {
     const isSameModifyTime = this.config["template"]["org_modify_time"] == this.ctime;
 
     const needUpdate = !hasOrgInfo || !orgInfoFileExist || !isSameModifyTime;
+
     if (needUpdate) {
       // log("获取线上数据");
-      const { url, data: org_info_new } = await this._getOrgInfo();
+      const res = await this._getOrgInfo();
+      if (res) {
+        const { url, data: org_info_new } = res;
 
-      this.config["template"]["org_info"] = org_info_new;
-      await fse.writeJson(this.config["template"]["org_path"], org_info_new, { spaces: "  " });
+        this.config["template"]["org_info"] = org_info_new;
+        await fse.writeJson(this.config["template"]["org_path"], org_info_new, { spaces: "  " });
 
-      this.config["template"]["org_modify_time"] = this.ctime;
-      this.config["template"]["org_url"] = url;
+        this.config["template"]["org_modify_time"] = this.ctime;
+        this.config["template"]["org_url"] = url;
 
-      const config_new = Object.assign({}, this.config);
-      // 离线仓库的数据太多，需要独立存放，提高配置文件可读性
-      Reflect.deleteProperty(config_new["template"], "org_info");
-      await fse.writeJson(this.configFilePath, config_new, {
-        spaces: "  ",
-      });
-    } else {
-      // log("读取本地缓存");
-      this.config["template"]["org_info"] = await fse.readJson(this.config["template"]["org_path"]);
+        const config_new = Object.assign({}, this.config);
+        // 离线仓库的数据太多，需要独立存放，提高配置文件可读性
+        Reflect.deleteProperty(config_new["template"], "org_info");
+
+        await fse.writeJson(this.configFilePath, config_new, { spaces: "  " });
+      }
     }
+
+    log("读取本地缓存");
+    this.config["template"]["org_info"] = await fse.readJson(this.config["template"]["org_path"]);
   }
 }
 
