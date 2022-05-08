@@ -78,11 +78,14 @@ export const Input = async (msg, defaultRes = "") => {
  *
  */
 export const checkUrl = async (url, data) => {
+  console.log("url: ", url);
   try {
-    const res = await axios({ method: "post", url, timeout: 1000 });
-
+    const http = axios.create({
+      baseURL: url,
+      timeout: 1000,
+    });
+    const res = await http.get("/");
     if (res) return true;
-
     return false;
   } catch (e) {
     return false;

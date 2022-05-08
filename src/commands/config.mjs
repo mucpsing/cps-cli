@@ -113,12 +113,12 @@ export class ConfigManager {
     const hasOrgInfo = !!this.config["template"]["org_path"];
     if (hasOrgInfo) this.config["template"]["info_path"] = DEFAULT_ORG_FILE_PATH;
 
-    const orgInfoFileExist = !fse.existsSync(this.config["template"]["org_path"]);
+    const orgInfoFileExist = fse.existsSync(this.config["template"]["org_path"]);
     if (orgInfoFileExist) await fse.ensureFile(this.config["template"]["org_path"]);
 
     const isSameModifyTime = this.config["template"]["org_modify_time"] == this.ctime;
 
-    const needUpdate = hasOrgInfo || orgInfoFileExist || !isSameModifyTime;
+    const needUpdate = !hasOrgInfo || !orgInfoFileExist || !isSameModifyTime;
     if (needUpdate) {
       // log("获取线上数据");
       const { url, data: org_info_new } = await this._getOrgInfo();

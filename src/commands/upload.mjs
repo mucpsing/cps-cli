@@ -101,6 +101,7 @@ export default async ctx => {
     const port = config.server["port"] || ctx.pkg.config["port"];
     const url = `http://localhost:${port}`;
     const hasLocalServer = await ctx.utils.checkUrl(url);
+    console.log("hasLocalServer: ", hasLocalServer);
 
     // 独立子进程开启服务器
     if (!hasLocalServer) ctx.utils.runCommandAlone("cps -s");
