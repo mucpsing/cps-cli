@@ -47,15 +47,20 @@ export const gitPushSync = async cwd => {
   }
 };
 
+// export const gitPull = async cwd => {
+//   let commands = [
+//     ["git", "add", "."],
+//     ["git", "commit", "-m", "cps-cli-before-pull"],
+//     ["git", "pull", "origin", "master"],
+//   ];
+//   for (let command of commands) {
+//     await shell(command, { cwd });
+//   }
+// };
+
 export const gitPull = async cwd => {
-  let commands = [
-    ["git", "add", "."],
-    ["git", "commit", "-m", "cps-cli-before-pull"],
-    ["git", "pull", "origin", "master"],
-  ];
-  for (let command of commands) {
-    await shell(command, { cwd });
-  }
+  let commands = "git add . & git commit -m cps-cli-before-pull & git pull origin master";
+  return await shell(command, { cwd });
 };
 
 // export const runServerAlone = async () => {

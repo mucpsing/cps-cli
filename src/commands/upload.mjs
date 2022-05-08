@@ -28,7 +28,7 @@ async function copyImg(imgList, destPath) {
     let srcImg = path.resolve(imgPath);
     let destImg = path.resolve(destPath, path.basename(imgPath));
 
-    if (fse.lstatSync(srcImg)) {
+    if (fse.existsSync(srcImg)) {
       await fse.copy(srcImg, destImg);
       result.push(destImg);
     }
