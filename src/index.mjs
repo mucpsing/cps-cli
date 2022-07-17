@@ -16,25 +16,16 @@ import * as utils from "./utils/index.mjs";
 
 // 解析参数;
 const options = new Command()
-  .option(
-    "-t, --template [tempaletName]",
-    "下载常用模板 .cpsrc.template"
-  )
+  .option("-t, --template [tempaletName]", "下载常用模板 .cpsrc.template")
   .option("-a, --add <script>", "添加常用工具函数 .cpsrc.add")
-  .option(
-    "-u, --upload <imgPath>",
-    "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload"
-  )
+  .option("-u, --upload <imgPath>", "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload")
   .option("-s, --server [port]", "对应配置 .cpsrc.upload.server")
   .option("--test [any]", "测试命令")
   .parse()
   .opts();
 
 (async () => {
-  const pkgPath = path.resolve(
-    path.dirname(process.argv[1]),
-    "../package.json"
-  );
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
   const configManager = new Config();
 
   const ctx = {
@@ -48,18 +39,25 @@ const options = new Command()
   let configInitOptions = { showLog: true };
 
   if (JSON.stringify(options) == "{}") {
+    // 默认入口
     RunCommand = WellcomeCommand;
   } else if (options.template) {
+    // template 入口
     RunCommand = TemplateCommand;
   } else if (options.upload) {
-    configInitOptions.showLog = false; // 上传插件不需要显示输出
+    // 上传插件不需要显示输出
+    configInitOptions.showLog = false;
     RunCommand = UploadCommand;
   } else if (options.test) {
+    // 测试入口
     configInitOptions.showLog = false;
     RunCommand = TestCommand;
   } else if (options.server) {
+    // cps -s
+    // 本地静态服务器入口
     RunCommand = ServerCommand;
   } else {
+    // 默认入口
     RunCommand = WellcomeCommand;
   }
 

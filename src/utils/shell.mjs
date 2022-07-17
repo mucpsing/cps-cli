@@ -18,6 +18,8 @@ export const shell = async (commands, options = { encoding: "utf-8", windowsHide
   }
 };
 
+export const runPyScripts = async (commands, options = { python_path: "" }) => {};
+
 export const runCommandAlone = async (commands, options) => {
   child_process.spawn(commands, [], {
     shell: true,
