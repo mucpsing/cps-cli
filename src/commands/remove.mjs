@@ -16,6 +16,7 @@ import { log } from "console";
 import inquirer from "inquirer";
 
 import { shell } from "../utils/shell.mjs";
+import { Input } from "../utils/index.mjs";
 
 const main = async ctx => {
   console.log("argvs: ", argvs);
@@ -38,12 +39,17 @@ if (process.mainModule === undefined) {
   // 当前为主模块
   console.log(123123123123);
 
-  if (!process.argv[2]) {
+  let targetPath;
+  const argvCount = process.argv.length;
+  if (argvCount <= 2) {
+    targetPath = await Input("请输入要处理的目录或文件：", "例如: c:/xxxx");
+  } else {
+    targetPath = process.argv[2];
   }
 
-  const target_path = process.argv[2];
+  console.log("targetPath: ", targetPath);
 
-  console.log("target_path: ", target_path);
+  // 调用shell
 }
 
 export default main;

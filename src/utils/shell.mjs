@@ -5,8 +5,8 @@ const exec = promisify(child_process.exec);
 
 const Commands = ["npm", "-v"];
 
-export const shell = async (commands, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
-  commands = commands.join(" ");
+export const shell = async (commandsList, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
+  const commands = commandsList.join(" ");
   try {
     const { stdout, stderr } = await exec(commands, { ...options });
 
