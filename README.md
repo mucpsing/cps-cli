@@ -16,7 +16,7 @@
 ## 目录|Index
 
 1. [简介|Introductions](#简介|Introductions)
-2. [基础功能|Base](##基础功能|Base)
+2. [主要功能|Base](##主要功能|Base)
 3. [安装|Install](#安装|Install)
 4. [使用|Usage](#使用|Usage)
 5. [配置|Settings](#配置|Settings)
@@ -42,35 +42,39 @@ Options:
   -a, --add <script>             添加常用工具函数 .cpsrc.add
   -u, --upload <imgPath>         上传图片到gitee/github仓库, 对应配置 .cpsrc.upload
   -s, --server [port]            对应配置 .cpsrc.upload.server.port
+  -tr, --tree                    生成当前目录的文件数
   --test [any]                   测试命令
 
   -h, --help                     display help for command
 ```
 
+
+
 ## 主要功能|Base
 
-- 一键下载仓库组织里面的项目
-  - [x] 当前默认的仓库组织：https://gitee.com/cps-cli-template
-  - [x] 通过配置文件修改关联自己的仓库组织
-  - [ ] 添加强制拉取线上数据功能（默认每天首次获取线上，后续采用本地缓存）
-- 下载常用的脚本到当前目录
-  - [ ] 关联指定仓库，下载自己的工具函数文件
-- 支持定义自己的组织仓库
-  - [x] gitee
-  - [ ] github
-  - [ ] gitlab
-  - [ ] bitbucket
+- 下载模板
+  - [x] 当前默认的仓库组织：
 
-- 支持Typora上传图片
-  - [ ] picgo引擎上传
-  - [x] 关联到本地仓库，且自动push到远程
+    - Gitee ：https://gitee.com/cps-cli-template
+
+  - [x] 支持自定义仓库组织
+
+  - [x] 添加强制拉取线上数据功能（默认每天首次获取线上，后续采用本地缓存）
+
+- 关联Typora图片上传
+  - [x] 通过粘贴图片自动上传
+  - [x] 关联到本地仓库
+  - [x] 首先复制图片到仓库，然后调用git远程同步
+  
+- 生成当前目录的目录结构图
   - [ ] 一键批量替换`md`文件内图片链接
+  - [ ] 去除`.py`文件注释块（`#`和`"""`），去除测试部分代码（`__name__=='__main__'`）
 
 
 
 
 
-## 1. 组织仓库快速下载|Template
+## 1. 下载常用模板|Template
 
 ### **only Command**
 
@@ -120,8 +124,6 @@ cps --template node-ts myProjectName
 
 ## 2. Typora 图片上传关联|Upload
 
-首先
-
 - 配置 `.cpsrc` 的 `upload.lcoal.path`字段，绑定本地图片仓库路径
 
   ```js
@@ -129,12 +131,12 @@ cps --template node-ts myProjectName
   {
     "upload": {
       "auto_push":true, // 上传的图片的同时push到远程
-
+  
       // 关联本地图片仓库目录，图片实际复制目录
       // 比如我的图片仓库地址是： https://gitee.com/capsion/markdown-image
       // 实际图片都是存放在 仓库的image目录下，所以本地的仓库也存在image
       "path": "D:/CPS/MyProject/markdown-image/image/",
-
+  
       // 本地服务器配置
       // 根据path的dirname会自动生成态路由： http://localhonst:port/{image}/*.png|jpg
       "server": {
@@ -148,12 +150,56 @@ cps --template node-ts myProjectName
 
 - Typora > 偏好配置 > 图像
   - 插入图片时： 选择"上传图片"
+  
   - 上传服务：  选择 "自定义命令" (Custom Command)
-  - 命令： `cps -u` 或者 `cps --upload`
-  ![](screenshot/cps@u.png)
+  
+  - 命令处填写： `cps -u` 或者 `cps --upload`
+    ![](screenshot/cps@u.png)
+  
+    ![](screenshot/cps@u.gif)
+
+## 3. 生成目录树
+
+- 示例 `tree.txt`
+
+```yaml
+【Root】                                     
+   ├─ bin/                                 
+   |   |-- app.mjs                         
+   |   `-- app.cjs                         
+   ├─ build/                                                   
+   ├─ docs/                                # xxxxx
+   ├─ screenshot/                          # xxxxx
+   ├─ src/                                 # xxxxx
+   |   ├─ core/                            
+   |   |   `-- .gitkeep                    
+   |   ├─ types/                           
+   |   |   `-- index.ts                    
+   |   ├─ utils/                           
+   |   |   `-- index.ts                    
+   |   |-- index.ts                        
+   |   |-- custom-env.d.ts                 
+   |   `-- app.ts                          
+   ├─ __tests__/                           
+   |   `-- .gitkeep                        
+   |-- yarn.lock                           
+   |-- tsconfig.json                       
+   |-- tree.txt                            
+   |-- rollup.config.ts                    
+   |-- README.md                           
+   |-- package.json                        
+   |-- package-lock.json                   
+   |-- LICENSE                             
+   |-- git-push-fast.bat                   
+   |-- git-push-costom.bat                 
+   |-- git-pull.bat                        
+   |-- git-load.bat                        
+   |-- api-extractor.json                  
+   `-- .gitignore                          
+
+```
 
 
-![](screenshot/cps@u.gif)
 
 
 # 配置|Settings
@@ -196,7 +242,7 @@ cps --template node-ts myProjectName
     ...each_repo_name:{ ../ }
   }
   ```
-  
+
   
 
 # 联系方式|Contact
