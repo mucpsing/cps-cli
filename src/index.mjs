@@ -11,6 +11,7 @@ import TemplateCommand from "./commands/template.mjs";
 import UploadCommand from "./commands/upload.mjs";
 import ServerCommand from "./commands/Server.mjs";
 import TestCommand from "./commands/test.mjs";
+import TreeCommand from "./commands/tree.mjs";
 
 import * as utils from "./utils/index.mjs";
 
@@ -20,6 +21,7 @@ const options = new Command()
   .option("-a, --add <script>", "添加常用工具函数 .cpsrc.add")
   .option("-u, --upload <imgPath>", "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload")
   .option("-s, --server [port]", "对应配置 .cpsrc.upload.server")
+  .option("-tr, --tree", "生成当前目录的文件数")
   .option("--test [any]", "测试命令")
   .parse()
   .opts();
@@ -56,6 +58,10 @@ const options = new Command()
     // cps -s
     // 本地静态服务器入口
     RunCommand = ServerCommand;
+  } else if (options.tree) {
+    // cps -tr --tree
+    // 本地静态服务器入口
+    RunCommand = TreeCommand;
   } else {
     // 默认入口
     RunCommand = WellcomeCommand;

@@ -15,22 +15,17 @@ import { log } from "console";
 import inquirer from "inquirer";
 import chalk from "chalk";
 
+import tree from "./tree.mjs";
 import template from "./template.mjs";
 import server from "./server.mjs";
 import test from "./test.mjs";
 
 const Wellcome = async ctx => {
-  const commands = { template, server, test };
+  const commands = { template, server, test, tree };
   const config = ctx.configManager.config;
 
   console.clear();
-  log(
-    chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`),
-    " --- ",
-    chalk.yellow.bold(
-      `最后更新: ${config["template"]["org_modify_time"]}`
-    )
-  );
+  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${config["template"]["org_modify_time"]}`));
 
   let { welcome: answers } = await inquirer.prompt([
     {
@@ -49,6 +44,10 @@ const Wellcome = async ctx => {
         {
           name: "开启本地静态服务器",
           value: "server",
+        },
+        {
+          name: "生成目录树",
+          value: "tree",
         },
         {
           name: "测试",
