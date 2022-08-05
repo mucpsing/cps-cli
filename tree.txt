@@ -1,0 +1,49 @@
+【Root】                                         
+   ├─ .github/                                 
+   |   ├─ workflows/                           
+   |   |   `-- publish.yaml                    
+   ├─ bin/                                     
+   |   `-- index.mjs                           
+   ├─ screenshot/                              
+   |   |-- cps@u.png                           
+   |   |-- cps@u.gif                           
+   |   |-- cps@template@projectName.gif        
+   |   |-- cps@template.gif                    
+   |   `-- cps.gif                             
+   ├─ src/                                     
+   |   ├─ commands/                            
+   |   |   |-- wellcome.mjs                    
+   |   |   |-- upload.mjs                      
+   |   |   |-- tree.mjs                        
+   |   |   |-- test.mjs                        
+   |   |   |-- template.mjs                    
+   |   |   |-- server.mjs                      
+   |   |   |-- remove.mjs                      
+   |   |   `-- config.mjs                      
+   |   ├─ scripts/                             
+   |   |   ├─ python/                          
+   |   |   |   `-- remove_comments.py          
+   |   ├─ utils/                               
+   |   |   |-- shell.mjs                       
+   |   |   |-- server.mjs                      
+   |   |   |-- init-project.mjs                
+   |   |   |-- index.mjs                       
+   |   |   |-- gitee-download.mjs              
+   |   |   |-- gitee-api.mjs                   
+   |   |   `-- git-tools.mjs                   
+   |   |-- test.mjs                            
+   |   |-- index.mjs                           
+   |   `-- env.mjs                             
+   ├─ types/                                   
+   |   `-- index.d.ts                          
+   ├─ __test__/                                
+   |-- yarn.lock                               
+   |-- README.md                               
+   |-- package.json                            
+   |-- package-lock.json                       
+   |-- LICENSE                                 
+   |-- jsconfig.json                           
+   |-- index.mjs                               
+   |-- global.d.ts                             
+   |-- .npmignore                              
+   `-- .gitignore                              

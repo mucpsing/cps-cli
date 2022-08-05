@@ -12,6 +12,7 @@
 
 import fs from "fs";
 import path from "path";
+import { copyToPaste } from "../utils/index.mjs";
 
 const DIR_SUFFIX = "├─";
 const FILE_SUFFIX = "|--";
@@ -75,7 +76,9 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
   }
 }
 
-function toFile(output_path = "tree.txt", indent = "    ") {
+function toFile(output_path = "", indent = "    ") {
+  output_path = output_path ? output_path : "tree.txt";
+
   let max = Math.max(...TREE_LIST.map(item => item.length));
   let res = "";
 
@@ -86,6 +89,8 @@ function toFile(output_path = "tree.txt", indent = "    ") {
   });
 
   fs.writeFileSync(output_path, res);
+
+  return res;
 }
 
 // test
@@ -94,9 +99,17 @@ function toFile(output_path = "tree.txt", indent = "    ") {
 
 export default async ctx => {
   const target = process.cwd();
+  const output_path = process.argv.length >= 4 ? process.argv[3] : "";
 
   // 读取目录并打印
   createTree(target);
-  toFile();
-  process.exit(0);
+
+  // 保存文件
+  const resultStr = toFile(output_path);
+
+  // 复制到粘贴板
+  copyToPaste(resultStr);
+
+  // 这个会阻碍复制命令
+  // process.exit(0);
 };

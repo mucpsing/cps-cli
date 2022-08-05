@@ -1,5 +1,6 @@
 import path from "path";
 import child_process from "child_process";
+import { promisify } from "util";
 import { log } from "console";
 
 import fse from "fs-extra";
@@ -115,6 +116,24 @@ function check_type_by_typeof(target) {
 
   return typeof target;
 }
+
+export const copyToPaste = data => {
+  switch (process.platform) {
+    case "darwin":
+      //unix 系统内核
+      child_process.exec("pbcopy").stdin.end(data);
+      break;
+    case "win32":
+      //windows 系统内核
+      child_process.exec("clip").stdin.end(data);
+      break;
+    default:
+      // Linux
+      child_process.exec("xclip").stdin.end(data);
+  }
+
+  console.log("结果已复制到粘贴板！！");
+};
 
 // export const inputSelect = async selection => {
 //   const title = "template";
