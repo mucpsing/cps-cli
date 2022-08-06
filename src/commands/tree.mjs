@@ -14,16 +14,19 @@ import fs from "fs";
 import path from "path";
 import { copyToPaste } from "../utils/index.mjs";
 
-const DIR_SUFFIX = "|--";
-const FILE_SUFFIX = "|--";
-const FILE_SUFFIX_LAST = "`--";
+const DIR_PREFIX = "|--";
+const FILE_PREFIX = "|--";
+const FILE_PREFIX_LAST = "`--";
+const BASE_PREFIX = "   |";
+const LINE_SUFFIX = "#\n";
 
 const TREE_LIST = [];
+let CURRT_DEEP = 1;
 
-function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], maxRecursiveDeep = 100, currtDeep = 1) {
-  if (currtDeep >= maxRecursiveDeep) return console.log("超过最大递归深度");
+function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], maxRecursiveDeep = 100) {
+  if (CURRT_DEEP >= maxRecursiveDeep) return console.log("超过最大递归深度");
 
-  const preIdent = new Array(indent).join("   |");
+  const preIdent = new Array(indent).join(BASE_PREFIX);
 
   // 前面的字符
   const dirinfo = fs.readdirSync(target_dir);
@@ -42,15 +45,15 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
   }
 
   // 文件夹操作
-
-  if (currtDeep == 1) {
-    let title = `【Root】`;
+  if (CURRT_DEEP == 1) {
+    let dirname = path.basename(target_dir);
+    let title = `DIR:${dirname}`;
     console.log(title);
     TREE_LIST.push(`${title}`);
   }
 
   for (let i = 0; i < dirs.length; i++) {
-    const dirName = `${preIdent}   ${DIR_SUFFIX} ${dirs[i]}/`;
+    const dirName = `${preIdent}   ${DIR_PREFIX} ${dirs[i]}/`;
     console.log(dirName);
     TREE_LIST.push(`${dirName}`);
 
@@ -59,16 +62,17 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
     let nextIdent = indent + 1;
 
     // 递归调用
-    createTree(nextPath, nextIdent, exclude, maxRecursiveDeep, (currtDeep += 1));
+    CURRT_DEEP += 1;
+    createTree(nextPath, nextIdent, exclude, maxRecursiveDeep);
   }
 
   // 下一级的 文件目录 以及层级
   for (let i = files.length - 1; i >= 0; i--) {
     let fileSTR;
     if (i === 0) {
-      fileSTR = `${preIdent}   ${FILE_SUFFIX_LAST} ${files[i]}`;
+      fileSTR = `${preIdent}   ${FILE_PREFIX_LAST} ${files[i]}`;
     } else {
-      fileSTR = `${preIdent}   ${FILE_SUFFIX} ${files[i]}`;
+      fileSTR = `${preIdent}   ${FILE_PREFIX} ${files[i]}`;
     }
 
     console.log(fileSTR);
@@ -79,18 +83,18 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
 function toFile(output_path = "", indent = "    ") {
   output_path = output_path ? output_path : "tree.txt";
 
-  let max = Math.max(...TREE_LIST.map(item => item.length));
-  let res = "";
+  let maxLineLen = Math.max(...TREE_LIST.map(item => item.length));
+  let resStr = "";
 
   TREE_LIST.map(line => {
-    if (line.length < max) {
-      res = res + line + " ".repeat(max - line.length) + "\n";
+    if (line.length <= maxLineLen) {
+      resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX;
     }
   });
 
-  fs.writeFileSync(output_path, res);
+  fs.writeFileSync(output_path, resStr);
 
-  return res;
+  return resStr;
 }
 
 // test
