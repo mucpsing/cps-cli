@@ -14,7 +14,7 @@ import fs from "fs";
 import path from "path";
 import { copyToPaste } from "../utils/index.mjs";
 
-const DIR_SUFFIX = "├─";
+const DIR_SUFFIX = "|--";
 const FILE_SUFFIX = "|--";
 const FILE_SUFFIX_LAST = "`--";
 
