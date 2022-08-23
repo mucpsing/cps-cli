@@ -18,7 +18,10 @@ const DIR_PREFIX = "|--";
 const FILE_PREFIX = "|--";
 const FILE_PREFIX_LAST = "`--";
 const BASE_PREFIX = "   |";
-const LINE_SUFFIX = "#\n";
+const LINE_SUFFIX = " #";
+const FLODER_LIST = [];
+
+const SUFFIX_REG = /\s(\w+)\//;
 
 const TREE_LIST = [];
 let CURRT_DEEP = 1;
@@ -83,12 +86,20 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
 function toFile(output_path = "", indent = "    ") {
   output_path = output_path ? output_path : "tree.txt";
 
+  // 获取最大长度
   let maxLineLen = Math.max(...TREE_LIST.map(item => item.length));
   let resStr = "";
 
+  // 填充空格
   TREE_LIST.map(line => {
-    if (line.length <= maxLineLen) {
-      resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX;
+    if (line.indexOf(path.basename(output_path)) < 0 && line.length <= maxLineLen) {
+      let reg_res = line.split(SUFFIX_REG);
+      console.log("reg_res: ", reg_res, reg_res.length);
+      if (reg_res && reg_res.length == 3) {
+        resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + "\n";
+      } else {
+        resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX + " \n";
+      }
     }
   });
 
