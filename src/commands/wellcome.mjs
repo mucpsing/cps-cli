@@ -7,7 +7,7 @@
  * @Projectname
  * @file_path "W:\CPS\MyProject\demo\cps-cli\src"
  * @Filename "wellcome.mjs"
- * @Description: 功能描述
+ * @Description: 用户交互视图
  */
 
 import { log } from "console";
@@ -25,7 +25,11 @@ const Wellcome = async ctx => {
   const config = ctx.configManager.config;
 
   console.clear();
-  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), " --- ", chalk.yellow.bold(`最后更新: ${config["template"]["org_modify_time"]}`));
+  log(
+    chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`),
+    " --- ",
+    chalk.yellow.bold(`最后更新: ${config["template"]["org_modify_time"]}`)
+  );
 
   let { welcome: answers } = await inquirer.prompt([
     {

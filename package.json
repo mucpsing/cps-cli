@@ -15,10 +15,7 @@
   "bin": {
     "cps": "src/index.mjs"
   },
-  "os": [
-    "linux",
-    "win32"
-  ],
+  "os": ["linux", "win32"],
   "scripts": {
     "test": "node src/index.mjs --test"
   },
@@ -26,11 +23,7 @@
     "url": "https://github.com/mucpsing/cps-cli/issues",
     "email": "373704015@qq.com"
   },
-  "keywords": [
-    "cps-cli",
-    "cpasion",
-    "cli"
-  ],
+  "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "MIT",
   "devDependencies": {
     "@types/axios": "^0.14.0",
