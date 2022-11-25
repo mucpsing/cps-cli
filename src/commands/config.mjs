@@ -43,7 +43,9 @@ export class ConfigManager {
       display.start("正在读取缓存数据...");
       await this._readOrgFile();
       display.succeed("读取缓存数据 完成！");
+
       await delay(500);
+      console.clear();
     } else {
       await this._readFile();
       await this._readOrgFile();

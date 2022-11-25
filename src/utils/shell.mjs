@@ -5,6 +5,15 @@ const exec = promisify(child_process.exec);
 
 const Commands = ["npm", "-v"];
 
+/**
+ * @Description - 运行shell/bash等指令
+ *
+ * @param {params} commands     - 列表或字符串形式，字符串最终会以空格转换为列表
+ * @param {params} options      - {description}
+ *
+ * @returns {} - {description}
+ *
+ */
 export const shell = async (commands, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
   commands = commands.join(" ");
   try {

@@ -12,7 +12,11 @@
 
 import fs from "fs";
 import path from "path";
+
+import chalk from "chalk";
+
 import { copyToPaste } from "../utils/index.mjs";
+import { log } from "console";
 
 const DIR_PREFIX = "|--";
 const FILE_PREFIX = "|--";
@@ -27,6 +31,7 @@ const TREE_LIST = [];
 let CURRT_DEEP = 1;
 
 function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], maxRecursiveDeep = 100) {
+  // 防止无限递归
   if (CURRT_DEEP >= maxRecursiveDeep) return console.log("超过最大递归深度");
 
   const preIdent = new Array(indent).join(BASE_PREFIX);
@@ -38,7 +43,6 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
 
   // 区分文件夹或者文件
   for (let i = 0; i < dirinfo.length; i++) {
-    // console.log(path.join(target, dirinfo[i]))
     let state = fs.statSync(path.join(target_dir, dirinfo[i]));
     if (state.isFile()) {
       files.push(dirinfo[i]);
@@ -51,13 +55,16 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
   if (CURRT_DEEP == 1) {
     let dirname = path.basename(target_dir);
     let title = `DIR:${dirname}`;
-    console.log(title);
+
+    log(chalk.greenBright.bold(title));
     TREE_LIST.push(`${title}`);
   }
 
   for (let i = 0; i < dirs.length; i++) {
     const dirName = `${preIdent}   ${DIR_PREFIX} ${dirs[i]}/`;
-    console.log(dirName);
+
+    // console.log(dirName);
+    log(dirName.replace("|", chalk.red.bold("|")));
     TREE_LIST.push(`${dirName}`);
 
     // 递归
@@ -78,7 +85,8 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
       fileSTR = `${preIdent}   ${FILE_PREFIX} ${files[i]}`;
     }
 
-    console.log(fileSTR);
+    // console.log(fileSTR);
+    log(fileSTR.replace("|", chalk.blue.bold("|")));
     TREE_LIST.push(fileSTR);
   }
 }
@@ -94,7 +102,6 @@ function toFile(output_path = "", indent = "    ") {
   TREE_LIST.map(line => {
     if (line.indexOf(path.basename(output_path)) < 0 && line.length <= maxLineLen) {
       let reg_res = line.split(SUFFIX_REG);
-      console.log("reg_res: ", reg_res, reg_res.length);
       if (reg_res && reg_res.length == 3) {
         resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + "\n";
       } else {
@@ -107,10 +114,6 @@ function toFile(output_path = "", indent = "    ") {
 
   return resStr;
 }
-
-// test
-// const target = path.resolve(".");
-// createTree(target);
 
 export default async ctx => {
   const target = process.cwd();
@@ -125,6 +128,7 @@ export default async ctx => {
   // 复制到粘贴板
   copyToPaste(resultStr);
 
+  log(`\n🙋${chalk.yellow.bold("结果已复制到粘贴板！！")}`);
   // 这个会阻碍复制命令
   // process.exit(0);
 };

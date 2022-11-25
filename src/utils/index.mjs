@@ -131,8 +131,6 @@ export const copyToPaste = data => {
       // Linux
       child_process.exec("xclip").stdin.end(data);
   }
-
-  console.log("结果已复制到粘贴板！！");
 };
 
 // export const inputSelect = async selection => {
