@@ -10,10 +10,12 @@
  * @Description: 功能描述
  */
 
-import path from "path";
-import fse from "fs-extra";
+import path from 'path';
+import fs from 'fs';
+import fse from 'fs-extra';
 
-import axios from "axios";
+// 最大文件尺寸
+const FILE_MAX_SIZE = 20;
 
 function Exit(code) {
   return process.exit(code);
@@ -48,7 +50,7 @@ async function copyImg(imgList, destPath) {
  * file:///c:/ccvb/test.png
  * ```
  */
-function printTyporaResult(imgList, msg = "Upload Success:") {
+function printTyporaResult(imgList, msg = 'Upload Success:') {
   if (imgList.length > 0) {
     console.log(msg);
     for (let each of imgList) {
@@ -77,34 +79,49 @@ function convertFileProtocol(contextList) {
   return result;
 }
 
+function fileChecker(filePath) {
+  let fileInfo = fs.statSync();
+
+  // 文件大小检查
+  if (fileInfo.size >= FILE_MAX_SIZE) {
+    console.log(`当前文件太大，超过配置: ${FILE_MAX_SIZE}`);
+    return false;
+  }
+
+  return true;
+}
+
 export default async ctx => {
   const imgPathList = ctx.argv;
-  const config = ctx.configManager.getConfig("upload");
-  const cwd = config["path"];
+  const config = ctx.configManager.getConfig('upload');
+  const cwd = config['path'];
 
   // 目录校验
   if (!fse.existsSync(cwd)) return Exit(0);
 
-  // 更新仓库（可能需要强制同步）
-  await ctx.utils.gitPull(cwd);
+  // 文件校验
+  if (!fileChecker) return Exit(0);
 
-  // 文件复制
+  // 更新仓库（可能需要强制同步）
+  let pullRes = await ctx.utils.gitPull(cwd);
+
+  // 复制文件到新仓库
   const result = await copyImg(imgPathList, cwd);
 
   if (!result.length > 0) return Exit(0);
 
   // 上传仓库
-  if (config["auto_push"]) await ctx.utils.gitPushSync(cwd);
+  if (config['auto_push']) await ctx.utils.gitPushSync(cwd);
 
   let imgList = [];
-  if (config.server["enable"]) {
-    const port = config.server["port"] || ctx.pkg.config["port"];
+  if (config.server['enable']) {
+    const port = config.server['port'] || ctx.pkg.config['port'];
     const url = `http://localhost:${port}`;
     const hasLocalServer = await ctx.utils.checkUrl(url);
-    console.log("hasLocalServer: ", hasLocalServer);
+    console.log('hasLocalServer: ', hasLocalServer);
 
     // 独立子进程开启服务器
-    if (!hasLocalServer) ctx.utils.runCommandAlone("cps -s");
+    if (!hasLocalServer) ctx.utils.runCommandAlone('cps -s');
 
     imgList = convertHttpProtocol(result, url);
   } else {
