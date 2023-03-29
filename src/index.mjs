@@ -17,6 +17,10 @@ import TreeCommand from "./commands/tree.mjs";
 import * as utils from "./utils/index.mjs";
 
 (async () => {
+  // 初始化配置管理模块
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
+  const configManager = new Config();
+
   // 解析参数;
   const program = new Command()
     .option("-v --version", "显示当前版本号")
@@ -25,15 +29,22 @@ import * as utils from "./utils/index.mjs";
     .option("-u, --upload <imgPath>", "上传图片到gitee/github仓库, 对应配置 .cpsrc.upload")
     .option("-s, --server [port]", "对应配置 .cpsrc.upload.server")
     .option("-tr, --tree", "生成当前目录的文件数")
-    .option("--test [any]", "测试命令");
+    .option("--test [any]", "测试命令")
+    .action((str, options) => {
+      console.log(options.template);
+      console.log({ str });
+      console.log({ options: options.options });
+    });
 
   program.command("tree").action((str, options) => {
     console.log({ str, options });
   });
 
+  program.command("template").action((str, options) => {
+    console.log({ str, options });
+  });
+
   const options = program.parse().opts();
-  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../package.json");
-  const configManager = new Config();
 
   const ctx = {
     configManager, // 根据入参有不同的初始化选项
