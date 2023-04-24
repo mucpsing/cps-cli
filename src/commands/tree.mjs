@@ -10,19 +10,20 @@
  * @Description: 功能描述
  */
 
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
-import chalk from "chalk";
+import chalk from 'chalk';
+import { StringDecoder } from 'string_decoder';
 
-import { copyToPaste } from "../utils/index.mjs";
-import { log } from "console";
+import { copyToPaste } from '../utils/index.mjs';
+import { log } from 'console';
 
-const DIR_PREFIX = "|--";
-const FILE_PREFIX = "|--";
-const FILE_PREFIX_LAST = "`--";
-const BASE_PREFIX = "   |";
-const LINE_SUFFIX = " #";
+const DIR_PREFIX = '|--';
+const FILE_PREFIX = '|--';
+const FILE_PREFIX_LAST = '`--';
+const BASE_PREFIX = '   |';
+const LINE_SUFFIX = ' #';
 const FLODER_LIST = [];
 
 const SUFFIX_REG = /\s(\w+)\//;
@@ -30,9 +31,14 @@ const SUFFIX_REG = /\s(\w+)\//;
 const TREE_LIST = [];
 let CURRT_DEEP = 1;
 
-function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], maxRecursiveDeep = 100) {
+function createTree(
+  target_dir,
+  indent = 1,
+  exclude = ['node_modules', '.git'],
+  maxRecursiveDeep = 100
+) {
   // 防止无限递归
-  if (CURRT_DEEP >= maxRecursiveDeep) return console.log("超过最大递归深度");
+  if (CURRT_DEEP >= maxRecursiveDeep) return console.log('超过最大递归深度');
 
   const preIdent = new Array(indent).join(BASE_PREFIX);
 
@@ -64,7 +70,7 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
     const dirName = `${preIdent}   ${DIR_PREFIX} ${dirs[i]}/`;
 
     // console.log(dirName);
-    log(dirName.replace("|", chalk.red.bold("|")));
+    log(dirName.replace('|', chalk.red.bold('|')));
     TREE_LIST.push(`${dirName}`);
 
     // 递归
@@ -86,38 +92,39 @@ function createTree(target_dir, indent = 1, exclude = ["node_modules", ".git"], 
     }
 
     // console.log(fileSTR);
-    log(fileSTR.replace("|", chalk.blue.bold("|")));
+    log(fileSTR.replace('|', chalk.blue.bold('|')));
     TREE_LIST.push(fileSTR);
   }
 }
 
-function toFile(output_path = "", indent = "    ") {
-  output_path = output_path ? output_path : "tree.txt";
+function toFile(output_path = '', indent = '    ') {
+  output_path = output_path ? output_path : 'tree.txt';
 
   // 获取最大长度
   let maxLineLen = Math.max(...TREE_LIST.map(item => item.length));
-  let resStr = "";
+  let resStr = '';
 
   // 填充空格
   TREE_LIST.map(line => {
     if (line.indexOf(path.basename(output_path)) < 0 && line.length <= maxLineLen) {
       let reg_res = line.split(SUFFIX_REG);
       if (reg_res && reg_res.length == 3) {
-        resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + "\n";
+        resStr +=
+          line + ' '.repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + '\n';
       } else {
-        resStr += line + " ".repeat(maxLineLen - line.length) + LINE_SUFFIX + " \n";
+        resStr += line + ' '.repeat(maxLineLen - line.length) + LINE_SUFFIX + ' \n';
       }
     }
   });
 
-  fs.writeFileSync(output_path, resStr);
+  fs.writeFileSync(output_path, resStr, { encoding: 'utf8' });
 
-  return resStr;
+  return Buffer.from(resStr, 'utf-8').toString();
 }
 
 export default async ctx => {
   const target = process.cwd();
-  const output_path = process.argv.length >= 4 ? process.argv[3] : "";
+  const output_path = process.argv.length >= 4 ? process.argv[3] : '';
 
   // 读取目录并打印
   createTree(target);
@@ -128,7 +135,7 @@ export default async ctx => {
   // 复制到粘贴板
   copyToPaste(resultStr);
 
-  log(`\n🙋${chalk.yellow.bold("结果已复制到粘贴板！！")}`);
+  log(`\n🙋${chalk.yellow.bold('结果已复制到粘贴板！！')}`);
   // 这个会阻碍复制命令
   // process.exit(0);
 };
