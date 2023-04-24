@@ -39,6 +39,8 @@ export const shell = async (commands: string[], options: ShellOptions) => {
     if (stdout) return { success: true, res: stdout.trim() };
 
     if (stderr) return { success: true, res: stderr.toString().trim() };
+
+    return { success: false };
   } catch (e: any) {
     return { success: false, err: e.toString().trim() };
   }
@@ -68,6 +70,20 @@ export const gitPushSync = async (cwd: string) => {
 };
 
 export const gitPull = async (cwd: string) => {
-  let commands = ['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-before-pull', '&', 'git', 'pull', 'origin', 'master'];
+  let commands = [
+    'git',
+    'add',
+    '.',
+    '&',
+    'git',
+    'commit',
+    '-m',
+    'cps-cli-before-pull',
+    '&',
+    'git',
+    'pull',
+    'origin',
+    'master',
+  ];
   return await shell(commands, { cwd });
 };

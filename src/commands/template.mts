@@ -21,6 +21,7 @@ import Download from '../utils/gitee-download.mjs';
 import { delay, ifDirExists, Input } from '../utils/index.mjs';
 
 import type { Ctx } from '../globaltype.mjs';
+import type { ConfigTemplate } from './config.mjs';
 
 async function userSelectRepo(selection: string[]) {
   const answer = await inquirer.prompt([
@@ -36,7 +37,7 @@ async function userSelectRepo(selection: string[]) {
 }
 
 export default async (ctx: Ctx) => {
-  const config = ctx.configManager.getConfig('template');
+  const config = ctx.configManager.getConfig('template') as ConfigTemplate;
   const display = ora();
   const orgInfo = config['org_info'];
   const orgUrl = config['org_url'];
@@ -60,6 +61,7 @@ export default async (ctx: Ctx) => {
   const repoUrl = `${orgInfo[repoName].namespace.html_url}/${repoName}`;
 
   if (!projectName) projectName = await Input(`请输入项目名称:`, repoName);
+  if (!projectName) return;
   const dest = path.join(process.cwd(), projectName);
 
   await ifDirExists(dest);

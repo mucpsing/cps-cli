@@ -49,7 +49,7 @@ export interface ConfigUpload {
 
 export interface Config {
   template: ConfigTemplate;
-  upload: object;
+  upload: ConfigUpload;
 }
 
 export class ConfigManager {
@@ -85,6 +85,12 @@ export class ConfigManager {
     };
 
     this.config = Object.assign({}, this.defaultConfig);
+  }
+
+  getConfig(key: string) {
+    if (this.config.hasOwnProperty(key)) {
+      return this.config[key as keyof Config];
+    }
   }
 
   async init({ showLog = false }) {

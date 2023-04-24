@@ -16,9 +16,13 @@ import ora from 'ora';
 import { serverStart } from '../utils/server.mjs';
 
 import type { Ctx } from '../globaltype.mjs';
+import type { ConfigUpload } from './config.mjs';
 
 export default async (ctx: Ctx) => {
-  const config = ctx.configManager.getConfig('upload');
+  const config = ctx.configManager.getConfig('upload') as ConfigUpload;
+
+  if (!config) return console.log('读取config失败');
+
   const port = config.server['port'] || ctx.pkg.config['port'];
   const cwd = config['path'];
 
