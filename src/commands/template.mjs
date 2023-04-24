@@ -1,31 +1,31 @@
-import path from "path";
-import { log } from "console";
+import path from 'path';
+import { log } from 'console';
 
-import ora from "ora";
-import chalk from "chalk";
-import inquirer from "inquirer";
+import ora from 'ora';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 
-import Download from "../utils/gitee-download.mjs";
-import { delay, ifDirExists, Input } from "../utils/index.mjs";
+import Download from '../utils/gitee-download.mjs';
+import { delay, ifDirExists, Input } from '../utils/index.mjs';
 
 async function userSelectRepo(selection) {
   const answer = await inquirer.prompt([
     {
-      name: "res",
-      type: "rawlist",
-      message: chalk.bgCyan("选择需要的项目模板："),
+      name: 'res',
+      type: 'rawlist',
+      message: chalk.bgCyan('选择需要的项目模板：'),
       choices: selection,
       default: 0,
     },
   ]);
-  return answer["res"];
+  return answer['res'];
 }
 
 export default async ctx => {
-  const config = ctx.configManager.getConfig("template");
+  const config = ctx.configManager.getConfig('template');
   const display = ora();
-  const orgInfo = config["org_info"];
-  const orgUrl = config["org_url"];
+  const orgInfo = config['org_info'];
+  const orgUrl = config['org_url'];
   let repoName = ctx.argv[0];
   let projectName = ctx.argv[1] || null;
 
@@ -34,7 +34,7 @@ export default async ctx => {
   log(`📁工作目录:  ${chalk.yellow.bold(process.cwd())}`);
 
   // 没有指定仓库，列出所有仓库名称，让用户选择
-  if (repoName == null || repoName == "" || typeof repoName == "boolean") {
+  if (repoName == null || repoName == '' || typeof repoName == 'boolean') {
     repoName = await userSelectRepo(Object.keys(orgInfo));
   } else {
     if (!orgInfo.hasOwnProperty(repoName)) {
@@ -51,7 +51,7 @@ export default async ctx => {
   await ifDirExists(dest);
 
   try {
-    display.start("开始下载项目模板...");
+    display.start('开始下载项目模板...');
     await delay(500);
     const res = await Download(repoUrl, dest, { clone: true });
 

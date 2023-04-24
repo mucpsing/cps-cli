@@ -1,81 +1,58 @@
-import { promisify } from "util";
-import child_process from "child_process";
-
+/*!
+ * @Author: CPS
+ * @email: 373704015@qq.com
+ * @Date: 2023-04-24 18:44:40.388371
+ * @Last Modified by: CPS
+ * @Last Modified time: 2023-04-24 18:05:49.091977
+ * @Projectname
+ * @file_path "W:\CPS\MyProject\demo\cps-cli\cps-cli\src\utils"
+ * @Filename "shell.mts"
+ * @Description: 主要用来处理调用各种shell命令
+ */
+import { promisify } from 'util';
+import child_process from 'child_process';
 const exec = promisify(child_process.exec);
-
-const Commands = ["npm", "-v"];
-
+const Commands = ['npm', '-v'];
 /**
  * @Description - 运行shell/bash等指令
  *
- * @param {params} commands     - 列表或字符串形式，字符串最终会以空格转换为列表
- * @param {params} options      - {description}
- *
- * @returns {} - {description}
- *
+ * @param {string[]} commands     - 列表形式的命令
  */
-export const shell = async (commands, options = { encoding: "utf-8", windowsHide: true, cwd: undefined }) => {
-  commands = commands.join(" ");
-  try {
-    const { stdout, stderr } = await exec(commands, { ...options });
-
-    if (stdout) return { success: true, res: stdout.trim() };
-
-    if (stderr) return { success: true, res: stderr.toString().trim() };
-  } catch (e) {
-    return { success: false, err: e.toString().trim() };
-  }
+export const shell = async (commands, options) => {
+    const default_options = { encoding: 'utf-8', windowsHide: true, cwd: undefined };
+    options = Object.assign(default_options, options);
+    const commands_str = commands.join(' ');
+    try {
+        const { stdout, stderr } = await exec(commands_str, { ...options });
+        if (stdout)
+            return { success: true, res: stdout.trim() };
+        if (stderr)
+            return { success: true, res: stderr.toString().trim() };
+    }
+    catch (e) {
+        return { success: false, err: e.toString().trim() };
+    }
 };
-
-export const runPyScripts = async (commands, options = { python_path: "" }) => {};
-
-export const runCommandAlone = async (commands, options) => {
-  child_process.spawn(commands, [], {
-    shell: true,
-    detached: true,
-    stdio: "ignore",
-    ...options,
-  });
+export const runPyScripts = async (commands, options = { python_path: '' }) => { };
+export const runCommandAlone = async (commands_str, options) => {
+    child_process.spawn(commands_str, [], {
+        shell: true,
+        detached: true,
+        stdio: 'ignore',
+        ...options,
+    });
 };
-
-export const gitPush = async cwd => {
-  let commands = "git add . & git commit -m cps-cli-push & git push origin master";
-  return await runCommandAlone(commands, {
-    cwd,
-    windowsHide: true,
-  });
+export const gitPushSync = async (cwd) => {
+    let commands = [
+        ['git', 'add', '.'],
+        ['git', 'commit', '-m', 'cps-cli-push'],
+        ['git', 'push', 'origin', 'master'],
+    ];
+    for (let command of commands) {
+        await shell(command, { cwd });
+    }
 };
-
-export const gitPushSync = async cwd => {
-  let commands = [
-    ["git", "add", "."],
-    ["git", "commit", "-m", "cps-cli-push"],
-    ["git", "push", "origin", "master"],
-  ];
-
-  for (let command of commands) {
-    await shell(command, { cwd });
-  }
+export const gitPull = async (cwd) => {
+    let commands = ['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-before-pull', '&', 'git', 'pull', 'origin', 'master'];
+    return await shell(commands, { cwd });
 };
-
-// export const gitPull = async cwd => {
-//   let commands = [
-//     ["git", "add", "."],
-//     ["git", "commit", "-m", "cps-cli-before-pull"],
-//     ["git", "pull", "origin", "master"],
-//   ];
-//   for (let command of commands) {
-//     await shell(command, { cwd });
-//   }
-// };
-
-export const gitPull = async cwd => {
-  let commands = ["git", "add", ".", "&", "git", "commit", "-m", "cps-cli-before-pull", "&", "git", "pull", "origin", "master"];
-  return await shell(commands, { cwd });
-};
-
-// export const runServerAlone = async () => {
-//   let commands = "cps -s";
-
-//   return await runCommandAlone(commands);
-// };
