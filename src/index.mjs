@@ -10,7 +10,7 @@ import Config from './commands/config.mjs';
 import WellcomeCommand from './commands/wellcome.mjs';
 import TemplateCommand from './commands/template.mjs';
 import UploadCommand from './commands/upload.mjs';
-import ServerCommand from './commands/Server.mjs';
+import ServerCommand from './commands/server.mjs';
 import TestCommand from './commands/test.mjs';
 import TreeCommand from './commands/tree.mjs';
 
@@ -22,10 +22,7 @@ import * as utils from './utils/index.mjs';
     .option('-v --version', '显示当前版本号')
     .option('-t, --template [tempaletName]', '下载常用模板 .cpsrc.template')
     .option('-a, --add <script>', '添加常用工具函数 .cpsrc.add')
-    .option(
-      '-u, --upload <imgPath>',
-      '上传图片到gitee/github仓库, 对应配置 .cpsrc.upload'
-    )
+    .option('-u, --upload <imgPath>', '上传图片到gitee/github仓库, 对应配置 .cpsrc.upload')
     .option('-s, --server [port]', '对应配置 .cpsrc.upload.server')
     .option('-tr, --tree', '生成当前目录的文件数')
     .option('--test [any]', '测试命令');
@@ -35,10 +32,7 @@ import * as utils from './utils/index.mjs';
   // });
 
   const options = program.parse().opts();
-  const pkgPath = path.resolve(
-    path.dirname(process.argv[1]),
-    '../package.json'
-  );
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), '../package.json');
   const configManager = new Config();
 
   const ctx = {
