@@ -17,7 +17,8 @@
   },
   "os": ["linux", "win32"],
   "scripts": {
-    "test": "node dist/index.mjs --test"
+    "test": "node dist/index.mjs --test",
+    "build": "tsc"
   },
   "bugs": {
     "url": "https://github.com/mucpsing/cps-cli/issues",
