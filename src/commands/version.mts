@@ -10,22 +10,22 @@
  * @Description: 管理当前插件的版本号，如果版本低于源，进行升级提示
  */
 
-import path from "path";
-import fse from "fs-extra";
+import path from 'path';
+import fse from 'fs-extra';
 
-import { shell } from "../utils/index.mjs";
+import { shell } from '../utils/index.mjs';
 
 const main = async ctx => {
-  const pkgPath = path.resolve(path.dirname(process.argv[1]), "../../package.json");
+  const pkgPath = path.resolve(path.dirname(process.argv[1]), '../../package.json');
   const pkgJson = fse.readJSONSync(pkgPath);
 
   const currtVersion = pkgJson.version;
 
-  const command = ["npm", "list", "-g", "@mucpsing/cli"];
+  const command = ['npm', 'list', '-g', '@mucpsing/cli'];
 
   const latestVersion = await shell(command);
 
-  console.log("latestVersion: ", latestVersion);
+  console.log('latestVersion: ', latestVersion);
 };
 
 (async () => {
