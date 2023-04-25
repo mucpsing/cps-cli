@@ -27,8 +27,25 @@ interface ShellOptions {
  * @Description - 运行shell/bash等指令
  *
  * @param {string[]} commands     - 列表形式的命令
+ * @example
+ * ```js
+ *  // 单条命令
+ *  let commands = ['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-before-pull', '&', 'git', 'pull', 'origin', 'master']
+    await shell(command, { cwd })
+    
+    // 多条命令
+    const commands = [
+      ['git', 'add', '.'],
+      ['git', 'commit', '-m', 'cps-cli-push'],
+      ['git', 'push', 'origin', 'master'],
+    ];
+
+    for (let command of commands) {
+      await shell(command, { cwd });
+    }
+ * ```
  */
-export const shell = async (commands: string[], options: ShellOptions) => {
+export const shell = async (commands: string[], options?: ShellOptions) => {
   const default_options: ShellOptions = { encoding: 'utf-8', windowsHide: true, cwd: undefined };
   options = Object.assign(default_options, options);
 
