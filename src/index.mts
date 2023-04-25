@@ -73,5 +73,8 @@ import type { Ctx } from './globaltype.mjs';
   }
 
   await ctx.configManager.init(configInitOptions);
+
+  console.log('ctx: ', ctx);
+
   await RunCommand(ctx);
 })();

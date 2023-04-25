@@ -29,26 +29,9 @@ export default async (ctx: Ctx) => {
   const display = ora();
 
   display.start(chalk.bold.red('获取仓库最新数据...\n'));
-  let res = await ctx.utils.shell(
-    [
-      'git',
-      'add',
-      '.',
-      '&',
-      'git',
-      'commit',
-      '-m',
-      'cps-cli-pull',
-      '&',
-      'git',
-      'pull',
-      'origin',
-      'master',
-    ],
-    {
-      cwd,
-    }
-  );
+  let res = await ctx.utils.shell(['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-pull', '&', 'git', 'pull', 'origin', 'master'], {
+    cwd,
+  });
 
   console.log(res.res || res.err);
 

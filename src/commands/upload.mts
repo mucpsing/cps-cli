@@ -15,6 +15,7 @@ import fs from 'fs';
 
 import fse from 'fs-extra';
 import type { Ctx } from '../globaltype.mjs';
+import type { ConfigUpload } from './config.mjs';
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
@@ -102,7 +103,7 @@ function fileChecker(filePath: string) {
 
 export default async (ctx: Ctx) => {
   const imgPathList = ctx.argv;
-  const config = ctx.configManager.getConfig('upload');
+  const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
 
   // 目录校验

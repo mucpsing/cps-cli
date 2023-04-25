@@ -58,7 +58,7 @@ export default async (ctx: Ctx) => {
     }
   }
 
-  const repoUrl = `${orgInfo[repoName].namespace.html_url}/${repoName}`;
+  const repoUrl = `${(orgInfo[repoName as keyof object] as any).namespace.html_url}/${repoName}`;
 
   if (!projectName) projectName = await Input(`请输入项目名称:`, repoName);
   if (!projectName) return;

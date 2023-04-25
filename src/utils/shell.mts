@@ -48,7 +48,7 @@ export const shell = async (commands: string[], options: ShellOptions) => {
 
 export const runPyScripts = async (commands: string[], options = { python_path: '' }) => {};
 
-export const runCommandAlone = async (commands_str: string, options: object) => {
+export const runCommandAlone = async (commands_str: string, options?: object) => {
   child_process.spawn(commands_str, [], {
     shell: true,
     detached: true,
@@ -70,20 +70,6 @@ export const gitPushSync = async (cwd: string) => {
 };
 
 export const gitPull = async (cwd: string) => {
-  let commands = [
-    'git',
-    'add',
-    '.',
-    '&',
-    'git',
-    'commit',
-    '-m',
-    'cps-cli-before-pull',
-    '&',
-    'git',
-    'pull',
-    'origin',
-    'master',
-  ];
+  let commands = ['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-before-pull', '&', 'git', 'pull', 'origin', 'master'];
   return await shell(commands, { cwd });
 };

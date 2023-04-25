@@ -23,6 +23,7 @@ import test from './test.mjs';
 import type { Ctx } from '../globaltype.mjs';
 
 const Wellcome = async (ctx: Ctx) => {
+  console.log('ctx: ', ctx);
   const commands: { [key: string]: (ctx: any) => Promise<any | never> } = {
     template,
     server,
@@ -32,11 +33,7 @@ const Wellcome = async (ctx: Ctx) => {
   const config = ctx.configManager.config;
 
   console.clear();
-  log(
-    chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`),
-    ' --- ',
-    chalk.yellow.bold(`最后更新: ${config['template']['org_modify_time']}`)
-  );
+  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), ' --- ', chalk.yellow.bold(`最后更新: ${config['template']['org_modify_time']}`));
 
   let { welcome: answers }: { welcome: string } = await inquirer.prompt([
     {
