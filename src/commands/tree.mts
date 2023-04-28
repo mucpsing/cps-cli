@@ -15,7 +15,7 @@ import path from 'path';
 import { log } from 'console';
 
 import chalk from 'chalk';
-// import { StringDecoder } from 'string_decoder';
+import type { Ctx } from '../globaltype.mjs';
 
 import { copyToPaste } from '../utils/index.mjs';
 
@@ -24,7 +24,6 @@ const FILE_PREFIX = '|--';
 const FILE_PREFIX_LAST = '`--';
 const BASE_PREFIX = '   |';
 const LINE_SUFFIX = ' #';
-// const FLODER_LIST = [];
 
 const SUFFIX_REG = /\s(\w+)\//;
 const TREE_LIST: string[] = [];
@@ -121,7 +120,7 @@ function toFile(output_path = '', indent = '    ') {
   return Buffer.from(resStr, 'utf-8').toString();
 }
 
-export default async (ctx: any) => {
+export default async (ctx: Ctx) => {
   const target = process.cwd();
   const output_path = process.argv.length >= 4 ? process.argv[3] : '';
 

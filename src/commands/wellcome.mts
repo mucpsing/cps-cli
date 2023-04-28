@@ -15,6 +15,7 @@ import { log } from 'console';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 
+import compress from './compress.mjs';
 import tree from './tree.mjs';
 import template from './template.mjs';
 import server from './server.mjs';
@@ -23,17 +24,21 @@ import test from './test.mjs';
 import type { Ctx } from '../globaltype.mjs';
 
 const Wellcome = async (ctx: Ctx) => {
-  console.log('ctx: ', ctx);
   const commands: { [key: string]: (ctx: any) => Promise<any | never> } = {
     template,
     server,
     test,
     tree,
+    compress,
   };
   const config = ctx.configManager.config;
 
   console.clear();
-  log(chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`), ' --- ', chalk.yellow.bold(`最后更新: ${config['template']['org_modify_time']}`));
+  log(
+    chalk.cyan.bold(`cps-cli@${ctx.pkg.version}`),
+    ' --- ',
+    chalk.yellow.bold(`最后更新: ${config['template']['org_modify_time']}`)
+  );
 
   let { welcome: answers }: { welcome: string } = await inquirer.prompt([
     {
@@ -56,6 +61,10 @@ const Wellcome = async (ctx: Ctx) => {
         {
           name: '生成目录树',
           value: 'tree',
+        },
+        {
+          name: '图片压缩(当前仅支持png)',
+          value: 'compress',
         },
         {
           name: '测试',

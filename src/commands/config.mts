@@ -87,7 +87,7 @@ export class ConfigManager {
     this.config = Object.assign({}, this.defaultConfig);
   }
 
-  getConfig(key: string) {
+  getConfig(key: keyof Config) {
     if (this.config.hasOwnProperty(key)) {
       return this.config[key as keyof Config];
     }

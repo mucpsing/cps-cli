@@ -14,8 +14,11 @@
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
+import { promisify } from 'util';
 
 import { glob } from 'glob';
+
+const exists = promisify(fs.exists);
 
 export interface PngQuantOptions {
   ext?: string;
@@ -41,6 +44,20 @@ const DEFAULT_OPTIONS: PngQuantOptions = {
   skipIfLarger: true,
   overwrite: false,
 };
+
+export async function getPngQuantPath() {
+  try {
+    const [dirname, ...__] = process.argv[1].split('dist');
+
+    const pngquantPath = path.resolve(dirname, 'tools/pngquant/pngquant.exe');
+
+    if (await exists(pngquantPath)) return pngquantPath;
+
+    return '';
+  } catch (err) {
+    return '';
+  }
+}
 
 export default class Pngquant {
   private default_options: PngQuantOptions = DEFAULT_OPTIONS;
@@ -140,7 +157,10 @@ export default class Pngquant {
     }
 
     try {
-      const { status, stderr, stdout } = spawnSync(this.pngquant, params, { shell: true, windowsVerbatimArguments: false });
+      const { status, stderr, stdout } = spawnSync(this.pngquant, params, {
+        shell: true,
+        windowsVerbatimArguments: false,
+      });
 
       switch (status) {
         case 98:
@@ -180,7 +200,9 @@ export default class Pngquant {
   public compresses = async (imgDirInput: string, imgDirOutput: string) => {
     if (!fs.existsSync(imgDirOutput)) fs.mkdirSync(imgDirOutput);
 
-    const imgList = (await glob('**/*.png', { cwd: imgDirInput, ignore: 'node_modules/**' })).map(file => path.join(imgDirInput, file));
+    const imgList = (await glob('**/*.png', { cwd: imgDirInput, ignore: 'node_modules/**' })).map(
+      file => path.join(imgDirInput, file)
+    );
 
     if (imgList.length == 0) return console.log('没有找到任何图片');
 

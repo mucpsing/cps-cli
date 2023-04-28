@@ -7,6 +7,7 @@ import { Command } from 'commander';
 
 import Config from './commands/config.mjs';
 
+import CompressCommand from './commands/compress.mjs';
 import WellcomeCommand from './commands/wellcome.mjs';
 import TemplateCommand from './commands/template.mjs';
 import UploadCommand from './commands/upload.mjs';
@@ -24,6 +25,7 @@ import type { Ctx } from './globaltype.mjs';
     .option('-v --version', '显示当前版本号')
     .option('-t, --template [tempaletName]', '下载常用模板 .cpsrc.template')
     .option('-a, --add <script>', '添加常用工具函数 .cpsrc.add')
+    .option('-c, --compress <imgFile> <output>', '图片压缩(目前仅支持.png)')
     .option('-u, --upload <imgPath>', '上传图片到gitee/github仓库, 对应配置 .cpsrc.upload')
     .option('-s, --server [port]', '对应配置 .cpsrc.upload.server')
     .option('-tr, --tree', '生成当前目录的文件数')
@@ -67,16 +69,13 @@ import type { Ctx } from './globaltype.mjs';
     // cps -tr --tree
     // 本地静态服务器入口
     RunCommand = TreeCommand;
-  } else if (options.test) {
-    RunCommand = TestCommand;
+  } else if (options.compress) {
+    RunCommand = CompressCommand;
   } else {
     // 默认入口
     RunCommand = WellcomeCommand;
   }
 
   await ctx.configManager.init(configInitOptions);
-
-  console.log('ctx: ', ctx);
-
   await RunCommand(ctx);
 })();
