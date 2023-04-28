@@ -13,13 +13,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import { promisify } from 'util';
-import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
+import { spawnSync } from 'child_process';
 
-import { spawnSync, spawn, exec } from 'child_process';
-
-const execp = promisify(exec);
-const spawnp = promisify(spawn);
+import { glob } from 'glob';
 
 export interface PngQuantOptions {
   ext?: string;
@@ -43,18 +39,40 @@ const DEFAULT_OPTIONS: PngQuantOptions = {
   qualityMax: 90,
   speed: 1,
   skipIfLarger: true,
-  overwrite: true,
+  overwrite: false,
 };
 
 export default class Pngquant {
   private default_options: PngQuantOptions = DEFAULT_OPTIONS;
   private options: PngQuantOptions;
   private pngquant: string = '';
+  private params: string[];
 
+  /**
+   * @example
+   * ```ts
+   *  // 初始化实例
+   *  const pngquant = path.resolve('../../tools/pngquant/pngquant.exe');
+   *  const PNG = new Pngquant({ exePath: pngquant }, { ext: '.1.png' });
+   * 
+   *  // 单文件压缩
+   *  const imgInput = 'D:/temp/test(2).png';
+   *  const imgOutput = 'd:/temp/img/testtt(2).png';
+   *  const res = await PNG.compress(imgInput, imgOutput);
+   
+   *  // 文件夹压缩
+   *  const imgDirInput = 'D:/temp/png';
+   *  const imgDirOutput = 'd:/temp/img/';
+   *  const res = await PNG.compresses(imgDirInput, imgDirOutput);
+   * 
+   * ```
+   *
+   */
   constructor(config: PngquantConfig, options?: PngQuantOptions) {
     this._check(config.exePath);
 
     this.options = Object.assign(this.default_options, options);
+    this.params = this.createParams(this.options);
   }
 
   private _check = (pngquantPath: string) => {
@@ -67,11 +85,29 @@ export default class Pngquant {
       return true;
     }
 
-    throw '调用pngquant失败，请确检查该程序';
+    throw '调用 pngquant 失败，请确检查该程序';
   };
 
   /**
-   * @description 压缩图片唯一暴露函数
+   * @description 合法检测，如：存在空格，图片文件是否真的存在
+   */
+  private _imgNameIsLegal = (imgPath: string) => {
+    if (!fs.existsSync(imgPath)) {
+      console.log('图片不存在，请检查图片路径');
+      return imgPath;
+    }
+
+    if (imgPath.includes(' ')) {
+      console.log('文件名称中存在空格或者特殊字符，无法进行处理');
+      return imgPath;
+    }
+
+    return '';
+  };
+
+  /**
+   * @description 压缩图片
+   *
    * @example
    * ```js
    * // ext 设置.png 则保留原文件名
@@ -82,98 +118,96 @@ export default class Pngquant {
    * console.log('图片压缩结果: ', res);
    * ```
    */
-  public compress = async (
-    imgPath: string,
-    opts: { outputDir?: string; outputName?: string } = {}
-  ) => {
-    if (!fs.existsSync(imgPath)) {
-      console.log('图片不存在，请检查图片路径');
+  public compress = async (imgPath: string, outputImgPath?: string) => {
+    let res = { success: false };
+    if (this._imgNameIsLegal(imgPath)) return imgPath;
+
+    if (outputImgPath && !outputImgPath.endsWith('.png')) {
+      console.log('图片输出路径无效，必须是.png后缀结尾的字符串');
       return imgPath;
     }
 
-    const params = this.createParams(imgPath);
     const basename = path.basename(imgPath);
     const dirname = path.dirname(imgPath);
+    const params = [imgPath, ...this.params];
 
-    if (opts.outputDir) console.log({ outputDir: opts.outputDir });
+    //指定了输出文件名，此处ext不再适用
+    if (outputImgPath) {
+      params.forEach((flag, i) => {
+        if (flag.startsWith('--ext')) params[i] = '';
+      });
+      params.push(`--output=${outputImgPath}`);
+    }
 
     try {
-      const commands_str = [this.pngquant, ...params].join(' ');
-      const res = await execp(commands_str, { encoding: 'utf-8', windowsHide: true });
+      const { status, stderr, stdout } = spawnSync(this.pngquant, params, { shell: true, windowsVerbatimArguments: false });
 
-      console.log('res: ', res);
+      switch (status) {
+        case 98:
+          console.log('图片可能属于已压缩，无任何操作');
+          return imgPath;
 
-      // console.log(1);
-      // console.log('stderr: ', stderr);
-      // console.log('stdout: ', stdout);
-      // if (stdout) {
-      //   let outName = basename;
-      //   let outDir = dirname;
+        case 0:
+          if (outputImgPath) return outputImgPath;
 
-      //   if (opts.outputDir) outDir = opts.outputDir;
-      //   console.log(2);
+          let outName = basename;
+          let outDir = dirname;
 
-      //   if (opts.outputName) {
-      //     let name, rest;
-      //     if (opts.outputName) {
-      //       [name, ...rest] = opts.outputName.split('.png');
-      //     } else {
-      //       [name, ...rest] = basename.split('.png');
-      //     }
-      //     outName = name;
-      //   }
+          if (this.options.ext) {
+            let [name, ...__] = basename.split('.png');
+            outName = `${name}${this.options.ext}`;
+          } else {
+            outName = `${outName}-fs8.png`;
+          }
+          return path.join(outDir, outName);
 
-      //   console.log(3);
-
-      //   if (this.options.ext) {
-      //     outName = `${outName}${this.options.ext}`;
-      //   } else {
-      //     outName = `${outName}-fs8.png`;
-      //   }
-      //   console.log('this.options.ext: ', this.options.ext);
-
-      //   return path.join(outDir, outName);
-      // } else {
-      //   if (stderr) {
-      //     console.log('stderr: ', stderr);
-      //     return imgPath;
-      //   }
-      // }
+        default:
+          console.log(`code[${status}]: `, imgPath);
+          console.log({ status, stderr: stderr.toString(), stdout });
+          console.log('commands: ');
+          console.log([this.pngquant, ...params].join(' '));
+      }
     } catch (err) {
       console.log('err: ', err);
+      console.log('commands: ');
+      console.log([this.pngquant, ...params].join(' '));
       return imgPath;
     }
 
     return imgPath;
   };
 
-  public compresses = async (imgDir: string, outputDir: string) => {
-    if (fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+  public compresses = async (imgDirInput: string, imgDirOutput: string) => {
+    if (!fs.existsSync(imgDirOutput)) fs.mkdirSync(imgDirOutput);
 
-    const imgList = (await glob('**/*.png', { cwd: imgDir, ignore: 'node_modules/**' })).map(file =>
-      path.join(imgDir, file)
-    );
+    const imgList = (await glob('**/*.png', { cwd: imgDirInput, ignore: 'node_modules/**' })).map(file => path.join(imgDirInput, file));
 
     if (imgList.length == 0) return console.log('没有找到任何图片');
 
     let res: string[] = [];
     imgList.forEach(async (imgPath: string) => {
-      res.push(await this.compress(imgPath, { outputDir: outputDir }));
+      const basename = path.basename(imgPath);
+
+      const output = path.join(imgDirOutput, basename);
+
+      res.push(await this.compress(imgPath, output));
     });
+
+    return res;
   };
 
-  public createParams = (imgPath: string, opts?: { output?: string }) => {
-    let params: string[] = [imgPath];
+  public createParams = (opts: PngQuantOptions) => {
+    let params: string[] = ['--force'];
 
-    params.push(`--ext=${this.options.ext}`);
-    params.push(`--quality=${this.options.qualityMin}-${this.options.qualityMax}`);
+    params.push(`--quality=${opts.qualityMin}-${opts.qualityMax}`);
+    if (opts['speed']) params.push(`--speed=${opts.speed}`);
+    if (opts['skipIfLarger']) params.push('--skip-if-larger');
 
-    if (this.options['speed']) params.push(`--speed=${this.options.speed}`);
-    if (this.options['skipIfLarger']) params.push('--skip-if-larger');
-    if (this.options['overwrite']) params.push('--force');
-
-    if (opts) {
-      if (opts.output) params.push(`--output=${opts.output}`);
+    // 覆盖源文件
+    if (opts['overwrite']) {
+      params.push(`--ext=.png`);
+    } else {
+      if (opts.ext) params.push(`--ext=${opts.ext}`);
     }
 
     return params;
@@ -181,15 +215,17 @@ export default class Pngquant {
 }
 
 (async () => {
-  const imgDir = 'D:/CPS/MyProject/markdown-image/image';
-  const target = 'D:/temp/nodejs-pngquant/test-old.png';
-  const outputDir = 'd:/temp/nodejs-pngquant';
-
+  /* 初始化实例 */
   const pngquant = path.resolve('../../tools/pngquant/pngquant.exe');
-  const PNG = new Pngquant({ exePath: pngquant }, { ext: '.1.png', overwrite: true });
+  const PNG = new Pngquant({ exePath: pngquant }, { ext: '.1.png' });
 
-  // const res = await PNG.compresses(imgDir, { outputDir });
-  const res = await PNG.compress(target, { outputDir });
+  /* 文件夹压缩 */
+  const imgDirInput = 'D:/temp/png';
+  const imgDirOutput = 'd:/temp/img/';
+  // const res = await PNG.compresses(imgDirInput, imgDirOutput);
 
-  console.log('图片压缩结果: ', res);
+  /* 单文件压缩 */
+  const imgInput = 'D:/temp/test(2).png';
+  const imgOutput = 'd:/temp/img/testtt(2).png';
+  // const res = await PNG.compress(imgInput, imgOutput);
 })();
