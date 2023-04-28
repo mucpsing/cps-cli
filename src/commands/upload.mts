@@ -12,10 +12,16 @@
 
 import path from 'path';
 import fs from 'fs';
+import { promisify } from 'util';
 
 import fse from 'fs-extra';
 import type { Ctx } from '../globaltype.mjs';
 import type { ConfigUpload } from './config.mjs';
+
+import Pngquant from '../utils/pngquant.mjs';
+const exists = promisify(fs.exists);
+
+let PNG;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
@@ -28,13 +34,16 @@ function Exit(code: number) {
  * @Description - 复制图片到 upload.local.path
  */
 async function copyImg(imgList: string[], destPath: string) {
-  const result = [];
+  const result: string[] = [];
   for (let imgPath of imgList) {
     let srcImg = path.resolve(imgPath);
     let destImg = path.resolve(destPath, path.basename(imgPath));
 
-    if (fse.existsSync(srcImg)) {
+    if (await exists(srcImg)) {
       await fse.copy(srcImg, destImg);
+
+      // 压缩文件
+
       result.push(destImg);
     }
   }
@@ -105,12 +114,14 @@ export default async (ctx: Ctx) => {
   const imgPathList = ctx.argv;
   const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
+  const pngquantPath = path.resolve();
+  // PNG = new Pngquant()
 
   // 目录校验
   if (!fse.existsSync(cwd)) return Exit(0);
 
   // 文件校验
-  if (!fileChecker) return Exit(0);
+  // if (!fileChecker()) return Exit(0);
 
   // 更新仓库（可能需要强制同步）
   let pullRes = await ctx.utils.gitPull(cwd);
