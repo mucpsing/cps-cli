@@ -21,13 +21,27 @@ import type { ConfigUpload } from './config.mjs';
 import Pngquant from '../utils/pngquant.mjs';
 const exists = promisify(fs.exists);
 
-let PNG;
+let PNG: Pngquant | undefined;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
 
 function Exit(code: number) {
   return process.exit(code);
+}
+
+function getPngQuantPath(): string {
+  try {
+    const [dirname, ...__] = process.argv[1].split('dist');
+
+    const pngquantPath = path.resolve(dirname, 'tools/pngquant/pngquant.exe');
+
+    if (fs.existsSync(pngquantPath)) return pngquantPath;
+
+    return '';
+  } catch (err) {
+    return '';
+  }
 }
 
 /**
@@ -43,6 +57,7 @@ async function copyImg(imgList: string[], destPath: string) {
       await fse.copy(srcImg, destImg);
 
       // 压缩文件
+      if (PNG) PNG.compress(destImg);
 
       result.push(destImg);
     }
@@ -114,8 +129,11 @@ export default async (ctx: Ctx) => {
   const imgPathList = ctx.argv;
   const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
-  const pngquantPath = path.resolve();
-  // PNG = new Pngquant()
+
+  const pngquantPath = getPngQuantPath();
+  if (pngquantPath) {
+    PNG = new Pngquant({ exePath: pngquantPath }, { overwrite: true });
+  }
 
   // 目录校验
   if (!fse.existsSync(cwd)) return Exit(0);

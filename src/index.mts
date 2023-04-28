@@ -67,6 +67,8 @@ import type { Ctx } from './globaltype.mjs';
     // cps -tr --tree
     // 本地静态服务器入口
     RunCommand = TreeCommand;
+  } else if (options.test) {
+    RunCommand = TestCommand;
   } else {
     // 默认入口
     RunCommand = WellcomeCommand;
