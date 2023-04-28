@@ -7,7 +7,7 @@
  * @Projectname
  * @file_path "D:\CPS\MyProject\Projects_Personal\cps-cli\cps-cli\src\commands"
  * @Filename "upload.mts"
- * @Description: 功能描述
+ * @Description: Typroa的upload插件，配置自定义指令为cps -u，则可以通过本模块进行图片文件的上传
  */
 
 import path from 'path';
@@ -15,10 +15,11 @@ import fs from 'fs';
 import { promisify } from 'util';
 
 import fse from 'fs-extra';
+
+import Pngquant from '../utils/pngquant.mjs';
 import type { Ctx } from '../globaltype.mjs';
 import type { ConfigUpload } from './config.mjs';
 
-import Pngquant from '../utils/pngquant.mjs';
 const exists = promisify(fs.exists);
 
 let PNG: Pngquant | undefined;
@@ -30,13 +31,13 @@ function Exit(code: number) {
   return process.exit(code);
 }
 
-function getPngQuantPath(): string {
+async function getPngQuantPath() {
   try {
     const [dirname, ...__] = process.argv[1].split('dist');
 
     const pngquantPath = path.resolve(dirname, 'tools/pngquant/pngquant.exe');
 
-    if (fs.existsSync(pngquantPath)) return pngquantPath;
+    if (await exists(pngquantPath)) return pngquantPath;
 
     return '';
   } catch (err) {
@@ -130,8 +131,9 @@ export default async (ctx: Ctx) => {
   const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
 
-  const pngquantPath = getPngQuantPath();
+  const pngquantPath = await getPngQuantPath();
   if (pngquantPath) {
+    console.log('pngquantPath: ', pngquantPath);
     PNG = new Pngquant({ exePath: pngquantPath }, { overwrite: true });
   }
 
@@ -171,3 +173,7 @@ export default async (ctx: Ctx) => {
   printTyporaResult(imgList);
   Exit(0);
 };
+
+// (async () => {
+//   const shell = 'cps -u {imgPath}'
+// })()

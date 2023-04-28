@@ -214,18 +214,18 @@ export default class Pngquant {
   };
 }
 
-(async () => {
-  /* 初始化实例 */
-  const pngquant = path.resolve('../../tools/pngquant/pngquant.exe');
-  const PNG = new Pngquant({ exePath: pngquant }, { ext: '.1.png' });
+// (async () => {
+//   /* 初始化实例 */
+//   const pngquant = path.resolve('../../tools/pngquant/pngquant.exe');
+//   const PNG = new Pngquant({ exePath: pngquant }, { ext: '.1.png' });
 
-  /* 文件夹压缩 */
-  const imgDirInput = 'D:/temp/png';
-  const imgDirOutput = 'd:/temp/img/';
-  // const res = await PNG.compresses(imgDirInput, imgDirOutput);
+//   /* 文件夹压缩 */
+//   const imgDirInput = 'D:/temp/png';
+//   const imgDirOutput = 'd:/temp/img/';
+//   // const res = await PNG.compresses(imgDirInput, imgDirOutput);
 
-  /* 单文件压缩 */
-  const imgInput = 'D:/temp/test(2).png';
-  const imgOutput = 'd:/temp/img/testtt(2).png';
-  // const res = await PNG.compress(imgInput, imgOutput);
-})();
+//   /* 单文件压缩 */
+//   const imgInput = 'D:/temp/test(2).png';
+//   const imgOutput = 'd:/temp/img/testtt(2).png';
+//   // const res = await PNG.compress(imgInput, imgOutput);
+// })();
