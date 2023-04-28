@@ -7,15 +7,22 @@
  * @Projectname
  * @file_path "D:\CPS\MyProject\Projects_Personal\cps-cli\cps-cli\src\commands"
  * @Filename "upload.mts"
- * @Description: 功能描述
+ * @Description: Typroa的upload插件，配置自定义指令为cps -u，则可以通过本模块进行图片文件的上传
  */
 
 import path from 'path';
 import fs from 'fs';
+import { promisify } from 'util';
 
 import fse from 'fs-extra';
+
+import Pngquant from '../utils/pngquant.mjs';
 import type { Ctx } from '../globaltype.mjs';
 import type { ConfigUpload } from './config.mjs';
+
+const exists = promisify(fs.exists);
+
+let PNG: Pngquant | undefined;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
@@ -24,17 +31,35 @@ function Exit(code: number) {
   return process.exit(code);
 }
 
+async function getPngQuantPath() {
+  try {
+    const [dirname, ...__] = process.argv[1].split('dist');
+
+    const pngquantPath = path.resolve(dirname, 'tools/pngquant/pngquant.exe');
+
+    if (await exists(pngquantPath)) return pngquantPath;
+
+    return '';
+  } catch (err) {
+    return '';
+  }
+}
+
 /**
  * @Description - 复制图片到 upload.local.path
  */
 async function copyImg(imgList: string[], destPath: string) {
-  const result = [];
+  const result: string[] = [];
   for (let imgPath of imgList) {
     let srcImg = path.resolve(imgPath);
     let destImg = path.resolve(destPath, path.basename(imgPath));
 
-    if (fse.existsSync(srcImg)) {
+    if (await exists(srcImg)) {
       await fse.copy(srcImg, destImg);
+
+      // 压缩文件
+      if (PNG) PNG.compress(destImg);
+
       result.push(destImg);
     }
   }
@@ -106,11 +131,17 @@ export default async (ctx: Ctx) => {
   const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
 
+  const pngquantPath = await getPngQuantPath();
+  if (pngquantPath) {
+    console.log('pngquantPath: ', pngquantPath);
+    PNG = new Pngquant({ exePath: pngquantPath }, { overwrite: true });
+  }
+
   // 目录校验
   if (!fse.existsSync(cwd)) return Exit(0);
 
   // 文件校验
-  if (!fileChecker) return Exit(0);
+  // if (!fileChecker()) return Exit(0);
 
   // 更新仓库（可能需要强制同步）
   let pullRes = await ctx.utils.gitPull(cwd);
@@ -142,3 +173,7 @@ export default async (ctx: Ctx) => {
   printTyporaResult(imgList);
   Exit(0);
 };
+
+// (async () => {
+//   const shell = 'cps -u {imgPath}'
+// })()

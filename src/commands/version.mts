@@ -14,8 +14,9 @@ import path from 'path';
 import fse from 'fs-extra';
 
 import { shell } from '../utils/index.mjs';
+import type { Ctx } from '../globaltype.mjs';
 
-const main = async ctx => {
+const main = async (ctx: Ctx) => {
   const pkgPath = path.resolve(path.dirname(process.argv[1]), '../../package.json');
   const pkgJson = fse.readJSONSync(pkgPath);
 
@@ -28,8 +29,8 @@ const main = async ctx => {
   console.log('latestVersion: ', latestVersion);
 };
 
-(async () => {
-  await main();
-})();
+// (async () => {
+//   await main();
+// })();
 
 export default main;

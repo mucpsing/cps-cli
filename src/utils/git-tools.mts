@@ -10,61 +10,63 @@
  * @Description: 功能描述
  */
 
-"use strict";
-import { spawn } from "child_process";
+import { spawn } from 'child_process';
 
 export default class GitTools {
+  cwd: string;
+  remark: string;
+
   /**
    * @param {String} cwd 工作目录
    * */
-  constructor(cwd) {
+  constructor(cwd: string) {
     this.cwd = cwd;
-    this.remark = "nodejs run git 默认备注信息";
+    this.remark = 'nodejs run git 默认备注信息';
   }
 
   /**
    * git add
    * */
   add() {
-    const params = ["add", "."];
+    const params = ['add', '.'];
 
-    return this.startChildProcess("git", params);
+    return this.startChildProcess('git', params);
   }
 
   /**
    * git commit
    * @param {String} remark 备注信息
    * */
-  commit(remark = "") {
-    const params = ["commit", "-m", remark || this.remark];
+  commit(remark = '') {
+    const params = ['commit', '-m', remark || this.remark];
 
-    return this.startChildProcess("git", params);
+    return this.startChildProcess('git', params);
   }
 
   /**
    * git push
    * @param {String} branch 分支名
    * */
-  push(branch) {
+  push(branch: string) {
     if (!branch) {
-      throw "please input branch name !";
+      throw 'please input branch name !';
     }
 
-    const params = ["push", "origin", branch];
+    const params = ['push', 'origin', branch];
 
-    return this.startChildProcess("git", params);
+    return this.startChildProcess('git', params);
   }
 
   /**
    * git checkout
    * @param {String} branch 分支名
    * */
-  checkout(branch) {
+  checkout(branch: string) {
     if (!branch) {
-      throw "please input branch name !";
+      throw 'please input branch name !';
     }
 
-    var params = ["checkout", branch];
+    var params = ['checkout', branch];
 
     return new Promise(async (resolve, reject) => {
       let branchInfo = await this.branch();
@@ -73,14 +75,14 @@ export default class GitTools {
       if (branch != branchInfo.current) {
         var isChange = await this.status();
         if (isChange) {
-          reject("当前有修改未提交无法切换分支");
+          reject('当前有修改未提交无法切换分支');
           return;
         }
         // 切分支
-        await this.startChildProcess("git", params);
-        resolve();
+        await this.startChildProcess('git', params);
+        resolve(true);
       } else {
-        resolve();
+        resolve(false);
       }
     });
   }
@@ -89,14 +91,14 @@ export default class GitTools {
    * git pull
    * @param {String} branch 分支名
    * */
-  pull(branch) {
+  pull(branch: string) {
     if (!branch) {
-      throw "please input branch name !";
+      throw 'please input branch name !';
     }
 
-    var params = ["pull", "origin", branch];
+    var params = ['pull', 'origin', branch];
 
-    return this.startChildProcess("git", params);
+    return this.startChildProcess('git', params);
   }
 
   /**
@@ -105,8 +107,8 @@ export default class GitTools {
    * */
   async status() {
     try {
-      var params = ["status", "-s"];
-      let result = await this.startChildProcess("git", params);
+      var params = ['status', '-s'];
+      let result = await this.startChildProcess('git', params);
       return result ? true : false;
     } catch (err) {
       console.error(err);
@@ -121,16 +123,16 @@ export default class GitTools {
    * @return {Array} branchs 当前本地所有分支
    * */
   async branch() {
-    var params = ["branch"];
-    var result = await this.startChildProcess("git", params);
+    const params = ['branch'];
+    const result = await this.startChildProcess('git', params);
 
-    var current = "";
-    var branchs = result
-      .split("\n")
+    let current: string = '';
+    const branchs = result
+      .split('\n')
       .map(item => {
         var reg = new RegExp(/\*/g);
         if (reg.test(item)) {
-          item = item.replace(reg, "");
+          item = item.replace(reg, '');
           current = item.trim();
         }
         return item.trim();
@@ -148,29 +150,29 @@ export default class GitTools {
    * @param {String} command  命令 (git/node...)
    * @param {Array} params 参数
    * */
-  startChildProcess(command, params) {
+  startChildProcess(command: string, params: string[]): Promise<string> {
     console.log();
     console.log(`cwd:${this.cwd}`);
-    console.log(`${command} ${params.join(" ")}`);
+    console.log(`${command} ${params.join(' ')}`);
     console.log();
 
     return new Promise((resolve, reject) => {
-      var process = spawn(command, params, {
+      const process = spawn(command, params, {
         cwd: this.cwd,
       });
 
-      var logMessage = `${command} ${params[0]}`;
-      var cmdMessage = "";
+      const logMessage = `${command} ${params[0]}`;
+      let cmdMessage: string = '';
 
-      process.stdout.on("data", data => {
+      process.stdout.on('data', data => {
         if (!data) {
           reject(`${logMessage} error1 : ${data}`);
         } else {
-          cmdMessage = data.toString();
+          cmdMessage = data.toString() as string;
         }
       });
 
-      process.on("close", data => {
+      process.on('close', data => {
         if (data) {
           reject(`${logMessage} error2 ! ${data}`);
         } else {
@@ -184,7 +186,7 @@ export default class GitTools {
    * 切换分支并拉取最新代码
    * @param {String} branch 目标分支
    * */
-  async switchBreach(branch) {
+  async switchBreach(branch: string) {
     try {
       // 切分支
       await this.checkout(branch);
@@ -205,7 +207,7 @@ export default class GitTools {
    * @param {String} remark 备注的信息
    * @param {String} branch 目标分支
    * */
-  async autoUpload(remark, branch) {
+  async autoUpload(remark: string, branch: string) {
     try {
       // git checkout branch
       await this.checkout(branch);
@@ -226,17 +228,17 @@ export default class GitTools {
         // git push branch
         await this.push(branch);
       } else {
-        console.log("not have to upload");
+        console.log('not have to upload');
       }
 
-      console.log("auto upload success !");
+      console.log('auto upload success !');
 
       return true;
     } catch (err) {
       console.error(err);
     }
 
-    console.log("auto upload error !");
+    console.log('auto upload error !');
     return false;
   }
 }
