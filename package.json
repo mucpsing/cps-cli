@@ -5,7 +5,7 @@
     "url": "https://www.capsion.top"
   },
   "name": "@mucpsing/cli",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "个人自用脚手架",
   "main": "index.mjs",
   "module": "bin/index.ems.js",
@@ -15,10 +15,7 @@
   "bin": {
     "cps": "dist/index.mjs"
   },
-  "os": [
-    "linux",
-    "win32"
-  ],
+  "os": ["linux", "win32"],
   "scripts": {
     "test": "node dist/index.mjs --test",
     "build": "tsc"
@@ -27,11 +24,7 @@
     "url": "https://github.com/mucpsing/cps-cli/issues",
     "email": "373704015@qq.com"
   },
-  "keywords": [
-    "cps-cli",
-    "cpasion",
-    "cli"
-  ],
+  "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "MIT",
   "devDependencies": {
     "@types/download": "^8.0.1",

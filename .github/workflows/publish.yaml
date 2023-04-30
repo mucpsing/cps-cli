@@ -24,6 +24,9 @@ jobs:
     - name: npm install
       run: npm install
 
+    - name: build
+      run: tsc
+
     - name: Publish
       run: |
         npm publish --access public

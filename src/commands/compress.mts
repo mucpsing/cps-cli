@@ -30,21 +30,31 @@ export default async (ctx: Ctx) => {
 
   // 没有传入输出路径，默认为覆盖原文件
   if (!imgOutput) return log(chalk.red.bold('请输输出位置，支持文件或者目录'));
+  if (!fs.existsSync(imgInput)) return log(chalk.red.bold('输入不正确'));
 
   // 输出检查
-  const inputInfo = fs.statSync(imgInput);
-  if (!inputInfo || !inputInfo.isFile()) return log(chalk.red.bold('文件不存在或者不合法。'));
-
-  // 判断为目录
   if (!imgOutput.endsWith('.png') && fs.existsSync(imgOutput)) {
     imgOutput = path.join(imgOutput, path.basename(imgInput));
   }
 
+  // 输入检查
   // 最终执行
   const exePath = await getPngQuantPath();
   if (!exePath) return log(`${chalk.red.bold('pngquant文件不存在，无法执行压缩')}`);
+  const PNG = new Pngquant({ exePath }, { ext: '.png' });
+  const inputInfo = fs.statSync(imgInput);
 
-  const PNG = new Pngquant({ exePath });
-  const res = await PNG.compress(imgInput, imgOutput);
-  console.log('res: ', res);
+  imgInput = path.resolve(imgInput);
+  imgOutput = path.resolve(imgOutput);
+  if (inputInfo.isFile() && imgInput.endsWith('.png')) {
+    console.log('输入是一个文件: ', imgInput);
+
+    const res = await PNG.compress(imgInput);
+    console.log('res: ', res);
+  } else if (inputInfo.isDirectory()) {
+    console.log('输入目录，将进行批量处理: ', imgInput);
+    console.log('输出目录，将进行批量处理: ', imgOutput);
+    const resList = await PNG.compresses(imgInput, imgOutput);
+    log(`处理图片: ${resList.length}`);
+  }
 };

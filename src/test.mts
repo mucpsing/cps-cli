@@ -17,3 +17,8 @@ export const copyToPaste = (data: string) => {
 };
 
 // copyToPaste('ccvvbbbb');
+
+const IMG_NAME_ISLEGAL_REF: string = '/\\s/';
+const REG = new RegExp(/[ \(\)（）]/);
+
+console.log(REG.test('c:/ccvb.png'));
