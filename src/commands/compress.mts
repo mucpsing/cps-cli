@@ -54,7 +54,8 @@ export default async (ctx: Ctx) => {
   } else if (inputInfo.isDirectory()) {
     console.log('输入目录，将进行批量处理: ', imgInput);
     console.log('输出目录，将进行批量处理: ', imgOutput);
+    ctx.configManager.display.start('图片压缩开始: \n');
     const resList = await PNG.compresses(imgInput, imgOutput);
-    log(`处理图片: ${resList.length}`);
+    ctx.configManager.display.succeed(`图片压缩完成，处理图片: ${resList.length}个`);
   }
 };

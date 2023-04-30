@@ -136,7 +136,6 @@ export default class Pngquant {
    * ```
    */
   public compress = (imgPath: string, outputImgPath?: string) => {
-    console.log('imgPath: ', imgPath);
     if (outputImgPath && !outputImgPath.endsWith('.png')) {
       console.log('图片输出路径无效，必须是.png后缀结尾的字符串');
       return imgPath;
