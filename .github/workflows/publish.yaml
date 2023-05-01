@@ -27,7 +27,13 @@ jobs:
     - name: build
       run: tsc
 
-    - name: check
+    - name: check_env
+      run: echo "$NPM_USERNAME and $NPM_EMAIL"
+      env:
+        NPM_USERNAME: ${{ NPM_ENV.USERNAME }}
+        NPM_EMAIL: ${{ NPM_ENV.EMAIL }}
+
+    - name: check_NPM
       run: npm who am i
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
