@@ -5,7 +5,7 @@
     "url": "https://www.capsion.top"
   },
   "name": "@mucpsing/cli",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "个人自用脚手架",
   "main": "index.mjs",
   "module": "bin/index.ems.js",
