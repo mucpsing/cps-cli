@@ -2,6 +2,8 @@ name: Npm Publish
 
 env:
   NODE_VERSION: "16"
+  NPM_USERNAME: "mucpsing"
+  NPM_EMAIL: "373704015@qq.com"
 
 on:
   push:
@@ -28,10 +30,7 @@ jobs:
       run: tsc
 
     - name: check_env
-      run: echo "$NPM_USERNAME and $NPM_EMAIL"
-      env:
-        NPM_USERNAME: ${{ NPM_ENV.USERNAME }}
-        NPM_EMAIL: ${{ NPM_ENV.EMAIL }}
+      run: echo "${{env.NPM_USERNAME}}@${{env.NPM_EMAIL}}"
 
     - name: check_NPM
       run: npm who am i
