@@ -60,5 +60,8 @@
   },
   "config": {
     "port": "45461"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
