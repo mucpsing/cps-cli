@@ -199,12 +199,12 @@ export default class Pngquant {
     return imgPath;
   };
 
-  public compresses = async (imgDirInput: string, imgDirOutput: string) => {
-    if (!fs.existsSync(imgDirOutput)) fs.mkdirSync(imgDirOutput);
+  public compresses = async (imgDirInput: string, imgDirOutput?: string) => {
+    if (imgDirOutput) {
+      if (!fs.existsSync(imgDirOutput)) fs.mkdirSync(imgDirOutput);
+    }
 
-    const imgList = (await glob('**/*.png', { cwd: imgDirInput, ignore: 'node_modules/**' })).map(
-      file => path.join(imgDirInput, file)
-    );
+    const imgList = (await glob('**/*.png', { cwd: imgDirInput, ignore: 'node_modules/**' })).map(file => path.join(imgDirInput, file));
 
     let res: string[] = [];
     let taskList: any[] = [];
@@ -216,7 +216,9 @@ export default class Pngquant {
     imgList.forEach((imgPath: string) => {
       const basename = path.basename(imgPath);
 
-      const output = path.join(imgDirOutput, basename);
+      const dirname = imgDirOutput ? imgDirOutput : path.dirname(imgPath);
+
+      const output = path.join(dirname, basename);
 
       // res.push(this.compress(imgPath, output))
 
@@ -238,8 +240,7 @@ export default class Pngquant {
 
     // 部分图片如果指定了质量反而无法压缩
     // 只有指定了最大最小质量才添加这个flag
-    if (opts['qualityMin'] && opts['qualityMax'])
-      params.push(`--quality=${opts.qualityMin}-${opts.qualityMax}`);
+    if (opts['qualityMin'] && opts['qualityMax']) params.push(`--quality=${opts.qualityMin}-${opts.qualityMax}`);
 
     if (opts['speed']) params.push(`--speed=${opts.speed}`);
     if (opts['skipIfLarger']) params.push('--skip-if-larger');
