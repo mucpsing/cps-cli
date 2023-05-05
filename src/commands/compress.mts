@@ -23,18 +23,21 @@ export default async (ctx: Ctx) => {
   console.clear();
 
   let imgInput = ctx.argv[0] || '';
-  let imgOutput = ctx.argv[1] || '';
+  let imgOutput = ctx.argv[1] || undefined;
 
   // 检查入参
   if (!imgInput) return log(chalk.red.bold('请输入目标图片'));
 
   // 没有传入输出路径，默认为覆盖原文件
-  if (!imgOutput) return log(chalk.red.bold('请输输出位置，支持文件或者目录'));
-  if (!fs.existsSync(imgInput)) return log(chalk.red.bold('输入不正确'));
+  if (imgOutput) {
+    if (!fs.existsSync(imgInput)) return log(chalk.red.bold('输入不正确'));
 
-  // 输出检查
-  if (!imgOutput.endsWith('.png') && fs.existsSync(imgOutput)) {
-    imgOutput = path.join(imgOutput, path.basename(imgInput));
+    // 输出检查
+    if (!imgOutput.endsWith('.png') && fs.existsSync(imgOutput)) {
+      imgOutput = path.join(imgOutput, path.basename(imgInput));
+    }
+
+    imgOutput = path.resolve(imgOutput);
   }
 
   // 输入检查
@@ -45,16 +48,17 @@ export default async (ctx: Ctx) => {
   const inputInfo = fs.statSync(imgInput);
 
   imgInput = path.resolve(imgInput);
-  imgOutput = path.resolve(imgOutput);
   if (inputInfo.isFile() && imgInput.endsWith('.png')) {
     console.log('输入是一个文件: ', imgInput);
 
-    const res = await PNG.compress(imgInput);
+    const res = PNG.compress(imgInput);
     console.log('res: ', res);
   } else if (inputInfo.isDirectory()) {
-    console.log('输入目录，将进行批量处理: ', imgInput);
-    console.log('输出目录，将进行批量处理: ', imgOutput);
+    console.log(chalk.blue.bold('将进行批量处理:'));
+    console.log('✍输入目录: ', imgInput);
+    console.log('🚪输出目录: ', imgOutput ? imgOutput : imgInput);
     ctx.configManager.display.start('图片压缩开始: \n');
+
     const resList = await PNG.compresses(imgInput, imgOutput);
     ctx.configManager.display.succeed(`图片压缩完成，处理图片: ${resList.length}个`);
   }
