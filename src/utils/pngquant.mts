@@ -215,9 +215,7 @@ export default class Pngquant {
 
     imgList.forEach((imgPath: string) => {
       const basename = path.basename(imgPath);
-
       const dirname = imgDirOutput ? imgDirOutput : path.dirname(imgPath);
-
       const output = path.join(dirname, basename);
 
       // res.push(this.compress(imgPath, output))
@@ -235,7 +233,7 @@ export default class Pngquant {
     return re;
   };
 
-  public createParams = (opts: PngQuantOptions) => {
+  private createParams = (opts: PngQuantOptions) => {
     let params: string[] = ['--force'];
 
     // 部分图片如果指定了质量反而无法压缩
