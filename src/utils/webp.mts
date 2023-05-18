@@ -12,13 +12,15 @@
 
 import fs from 'fs';
 import path from 'path';
-import { spawnSync, spawn } from 'child_process';
+import child_process from 'child_process';
 import { promisify } from 'util';
-
-import { glob } from 'glob';
+import { readdir, stat } from 'fs/promises';
+import { extname, join, basename } from 'path';
 
 const exists = promisify(fs.exists);
-const spawnp = promisify(spawn);
+const spawn = promisify(child_process.spawn);
+const execFile = promisify(child_process.execFile);
+const execFilePromise = promisify(child_process.execFile);
 
 export interface WebpOptions {
   output?: string;
@@ -71,7 +73,7 @@ export default class Webp {
     }
 
     // 检查cwebp指令
-    const checkGlobal = spawnSync(this.binPathCwebp, ['-h']);
+    const checkGlobal = child_process.spawnSync(this.binPathCwebp, ['-h']);
     if (checkGlobal.status == 0) {
       // 通过检查，开启jpeg、png、tiff 这几个格式的转换功能
       // this.options.
@@ -82,7 +84,7 @@ export default class Webp {
     }
 
     // 检查git2webp指令
-    const checkGif = spawnSync(this.binPathGif2webp, ['-h']);
+    const checkGif = child_process.spawnSync(this.binPathGif2webp, ['-h']);
     if (checkGif.status == 0) {
       this.switch.git2webp = true;
       console.log('git2webp转换功能测试通过');
@@ -123,11 +125,59 @@ export default class Webp {
       case '.gif':
         console.log('使用this.gif2webp处理: ');
 
-        return this.gif2webp(imgPath);
+        return await this.gif2webp(imgPath);
       default:
         console.log('不支持的文件格式: ', pathInfo.ext);
         return '';
     }
+  };
+
+  public convertToWebP = async (inputDir: string, outputDir: string, depth = 0): Promise<string[]> => {
+    if (depth > 30) {
+      console.warn('超过最大递归层数，停止递归');
+      return [];
+    }
+
+    const files = await readdir(inputDir);
+
+    const convertPromises = files.map(async file => {
+      const filePath = join(inputDir, file);
+      const stats = await stat(filePath);
+
+      if (stats.isDirectory()) {
+        return this.convertToWebP(filePath, outputDir, depth + 1);
+      }
+
+      const ext = extname(file).toLowerCase();
+      if (!['.jpg', '.jpeg', '.png', '.tiff'].includes(ext)) {
+        return null;
+      }
+
+      const outputFileName = basename(file, extname(file)) + '.webp';
+      const outputFilePath = join(outputDir, outputFileName);
+
+      try {
+        await execFilePromise('cwebp', [filePath, '-o', outputFilePath]);
+        console.log(`转换成功: ${outputFilePath}`);
+        return outputFilePath;
+      } catch (error) {
+        console.error(`转换文件出错: ${filePath}`);
+        return null;
+      }
+    });
+
+    const results = await Promise.all(convertPromises);
+
+    let convertedFiles: string[] = [];
+    for (const result of results) {
+      if (Array.isArray(result)) {
+        convertedFiles = convertedFiles.concat(result);
+      } else if (result !== null) {
+        convertedFiles.push(result);
+      }
+    }
+
+    return convertedFiles;
   };
 
   /**
@@ -140,9 +190,9 @@ export default class Webp {
       // if (status == 0) return output;
       // if (stderr) console.log(`转换${input}出错: `, stderr.toString());
 
-      const res = await spawnp(this.binPathCwebp, param, {});
-      console.log('res: ', res);
+      const res = await spawn(this.binPathCwebp, param, {});
 
+      if (res) return output;
       return '';
     } catch (error) {
       console.log('【cwebp】 error: ', error);
@@ -163,5 +213,5 @@ export default class Webp {
 
   const res = await webp.convert('D:/temp/png/test(2).png');
 
-  // console.log('res: ', res);
+  console.log('res: ', res);
 })();
