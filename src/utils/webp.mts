@@ -158,10 +158,10 @@ export default class Webp {
   };
 }
 
-(async () => {
-  const webp = new Webp();
+// (async () => {
+//   const webp = new Webp();
 
-  const res = await webp.convert('D:/temp/png/test(2).png');
+//   const res = await webp.convert('D:/temp/png/test(2).png');
 
-  // console.log('res: ', res);
-})();
+//   // console.log('res: ', res);
+// })();
