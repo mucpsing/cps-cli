@@ -150,7 +150,7 @@ export default class Webp {
       }
 
       const ext = extname(file).toLowerCase();
-      if (!['.jpg', '.jpeg', '.png', '.tiff', 'gif'].includes(ext)) {
+      if (!['.jpg', '.jpeg', '.png', '.tiff'].includes(ext)) {
         return null;
       }
 
@@ -158,12 +158,15 @@ export default class Webp {
       const outputFilePath = join(outputDir, outputFileName);
 
       try {
-        let bin = this.binPathCwebp;
-        if (ext == '.gif') bin = this.binPathGif2webp;
+        await execFilePromise(this.binPathCwebp, [
+          '-m',
+          '6',
+          '-mt',
+          filePath,
+          '-o',
+          outputFilePath,
+        ]);
 
-        await execFilePromise(bin, [filePath, '-o', outputFilePath]);
-
-        console.log(`转换成功: ${outputFilePath}`);
         return outputFilePath;
       } catch (error) {
         console.error(`转换文件出错: ${filePath}`);
@@ -180,6 +183,10 @@ export default class Webp {
       } else if (result !== null) {
         convertedFiles.push(result);
       }
+    }
+
+    if (convertPromises.length != results.length) {
+      console.log('输出结果的结果总数与输入数量不对，可能存在缺失，请详细检查');
     }
 
     return convertedFiles;
@@ -215,4 +222,13 @@ export default class Webp {
 
 async function test() {
   const webp = new Webp();
+  const target = 'W:/CPS/MyProject/markdown-image/image';
+  const output = 'D:/temp/output';
+
+  // const res = await webp.convert('D:/temp/png/test(2).png');
+  const res = await webp.convertes(target, output);
+
+  console.log('res: ', res.length);
 }
+
+// test();
