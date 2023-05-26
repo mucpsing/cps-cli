@@ -17,9 +17,7 @@ import { promisify } from 'util';
 import { readdir, stat } from 'fs/promises';
 import { extname, join, basename } from 'path';
 
-const exists = promisify(fs.exists);
 const spawn = promisify(child_process.spawn);
-const execFile = promisify(child_process.execFile);
 const execFilePromise = promisify(child_process.execFile);
 
 export interface WebpOptions {
@@ -132,7 +130,7 @@ export default class Webp {
     }
   };
 
-  public convertToWebP = async (inputDir: string, outputDir: string, depth = 0): Promise<string[]> => {
+  public convertes = async (inputDir: string, outputDir: string, depth = 0) => {
     if (depth > 30) {
       console.warn('超过最大递归层数，停止递归');
       return [];
@@ -145,11 +143,11 @@ export default class Webp {
       const stats = await stat(filePath);
 
       if (stats.isDirectory()) {
-        return this.convertToWebP(filePath, outputDir, depth + 1);
+        return this.convertes(filePath, outputDir, depth + 1);
       }
 
       const ext = extname(file).toLowerCase();
-      if (!['.jpg', '.jpeg', '.png', '.tiff'].includes(ext)) {
+      if (!['.jpg', '.jpeg', '.png', '.tiff', '.gif'].includes(ext)) {
         return null;
       }
 
@@ -157,8 +155,10 @@ export default class Webp {
       const outputFilePath = join(outputDir, outputFileName);
 
       try {
-        await execFilePromise('cwebp', [filePath, '-o', outputFilePath]);
-        console.log(`转换成功: ${outputFilePath}`);
+        let bin = this.binPathCwebp;
+        if (ext == '.gif') bin = this.binPathGif2webp;
+        await execFilePromise(bin, ['-m', '6', '-mt', filePath, '-o', outputFilePath]);
+
         return outputFilePath;
       } catch (error) {
         console.error(`转换文件出错: ${filePath}`);
@@ -175,6 +175,10 @@ export default class Webp {
       } else if (result !== null) {
         convertedFiles.push(result);
       }
+    }
+
+    if (convertPromises.length != results.length) {
+      console.log('输出结果的结果总数与输入数量不对，可能存在缺失，请详细检查');
     }
 
     return convertedFiles;
@@ -208,10 +212,15 @@ export default class Webp {
   };
 }
 
-(async () => {
+async function test() {
   const webp = new Webp();
+  const target = 'W:/CPS/MyProject/markdown-image/image';
+  const output = 'D:/temp/output';
 
-  const res = await webp.convert('D:/temp/png/test(2).png');
+  // const res = await webp.convert('D:/temp/png/test(2).png');
+  const res = await webp.convertes(target, output);
 
-  console.log('res: ', res);
-})();
+  console.log('res: ', res.length);
+}
+
+// test();

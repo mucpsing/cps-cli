@@ -17,12 +17,14 @@ import { promisify } from 'util';
 import fse from 'fs-extra';
 
 import Pngquant from '../utils/pngquant.mjs';
+import Webp from '../utils/webp.mjs';
 import type { Ctx } from '../globaltype.mjs';
 import type { ConfigUpload } from './config.mjs';
 
 const exists = promisify(fs.exists);
 
 let PNG: Pngquant | undefined;
+let WEBP: Webp | undefined;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
