@@ -14,14 +14,12 @@ import path from 'path';
 import express from 'express';
 
 export interface ServerParams {
-  staticPath: string;
-  port?: number;
+  staticPath: string; // 静态目录绝对路径
+  port?: number; // 服务器端口
 }
 
 export const serverStart = async ({ staticPath, port = 3000 }: ServerParams) => {
   const staticRoute = `/${path.basename(staticPath)}`;
-  // console.log("staticRoute: ", staticRoute);
-  // console.log("staticPath: ", staticPath);
 
   express()
     .use(express.json())
