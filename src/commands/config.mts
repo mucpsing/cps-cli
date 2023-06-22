@@ -35,7 +35,6 @@ export interface ConfigTemplate {
   org_info: object;
   org_add_time: string;
   org_modify_time: string;
-  info_path?: string;
 }
 
 export interface ConfigUpload {
@@ -157,15 +156,12 @@ export class ConfigManager {
   }
 
   private async _readOrgFile() {
-    const hasOrgInfo = !!this.config['template']['org_path'];
-    if (hasOrgInfo) this.config['template']['info_path'] = DEFAULT_ORG_FILE_PATH;
-
-    const orgInfoFileExist = fse.existsSync(this.config['template']['org_path']);
-    if (orgInfoFileExist) await fse.ensureFile(this.config['template']['org_path']);
+    const orgInfoFileExist = fse.existsSync(DEFAULT_ORG_FILE_PATH);
+    if (!orgInfoFileExist) await fse.ensureFile(DEFAULT_ORG_FILE_PATH);
 
     const isSameModifyTime = this.config['template']['org_modify_time'] == this.ctime;
 
-    const needUpdate = !hasOrgInfo || !orgInfoFileExist || !isSameModifyTime;
+    const needUpdate = !orgInfoFileExist || !isSameModifyTime;
 
     if (needUpdate) {
       // log("获取线上数据");
@@ -173,8 +169,8 @@ export class ConfigManager {
       if (res) {
         const { url, data: org_info_new } = res;
 
-        this.config['template']['org_info'] = org_info_new;
-        await fse.writeJson(this.config['template']['org_path'], org_info_new, { spaces: '  ' });
+        // this.config['template']['org_info'] = org_info_new;
+        await fse.writeJson(DEFAULT_ORG_FILE_PATH, org_info_new, { spaces: '  ' });
 
         this.config['template']['org_modify_time'] = this.ctime;
         this.config['template']['org_url'] = url;
@@ -188,7 +184,7 @@ export class ConfigManager {
     }
 
     log('读取本地缓存');
-    this.config['template']['org_info'] = await fse.readJson(this.config['template']['org_path']);
+    this.config['template']['org_info'] = await fse.readJson(DEFAULT_ORG_FILE_PATH);
   }
 }
 
