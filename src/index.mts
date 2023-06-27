@@ -43,7 +43,7 @@ import type { Ctx } from './globaltype.mjs';
     configManager, // 根据入参有不同的初始化选项
     pkg: fse.readJSONSync(pkgPath),
     utils,
-    argv: process.argv.slice(3, process.argv.length), // {string[]} 对应命令所需要的参数
+    argv: process.argv.slice(3, process.argv.length), //使用-u的话，后面的所有参数都解析为图片路径 {string[]} 对应命令所需要的参数
     program,
   };
 

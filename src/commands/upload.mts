@@ -18,7 +18,7 @@ import fse from 'fs-extra';
 
 import Pngquant from '../utils/pngquant.mjs';
 import type { Ctx } from '../globaltype.mjs';
-import type { ConfigUpload } from './config.mjs';
+import type { ConfigTemplate, ConfigUpload } from './config.mjs';
 
 const exists = promisify(fs.exists);
 
@@ -26,6 +26,7 @@ let PNG: Pngquant | undefined;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
+const OVER_WRITE = false;
 
 function Exit(code: number) {
   return process.exit(code);
@@ -51,26 +52,42 @@ async function getPngQuantPath() {
 async function copyImg(imgList: string[], destPath: string) {
   const result: string[] = [];
   for (let imgPath of imgList) {
+    destPath = path.resolve(destPath);
     let srcImg = path.resolve(imgPath);
     let destImg = path.resolve(destPath, path.basename(imgPath));
 
-    if (await exists(srcImg)) {
-      await fse.copy(srcImg, destImg);
+    // let dirImg = path.resolve(path.dirname(imgPath));
 
-      // 压缩文件
-      if (PNG) PNG.compress(destImg);
+    // 如果文件已经存在
+    if ((await exists(destImg)) && OVER_WRITE) {
+      // 复制
+      if (await exists(srcImg)) {
+        // await fse.copy(srcImg, destImg);
 
-      result.push(destImg);
+        // 压缩文件
+        if (PNG) PNG.compress(srcImg, destImg);
+      }
     }
+
+    // 不进行复制，直接返回true
+    result.push(destImg);
   }
 
   return result;
 }
 
+function isSameDestPath(config: ConfigTemplate, imgPathList: string[]): boolean {
+  try {
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * @Description - 打印符合Typora格式的结果
  *
- * @param {params} imgList  - {description}
+ * @param {params} imgList  - 图片绝对地数组
  *
  * ```text
  * Upload Success:
@@ -115,15 +132,19 @@ function convertFileProtocol(contextList: string[]) {
 }
 
 function fileChecker(filePath: string) {
-  let fileInfo = fs.statSync(filePath);
+  try {
+    let fileInfo = fs.statSync(filePath);
 
-  // 文件大小检查
-  if (fileInfo.size >= FILE_MAX_SIZE) {
-    console.log(`当前文件太大，超过配置: ${FILE_MAX_SIZE}`);
+    // 文件大小检查
+    if (fileInfo.size >= FILE_MAX_SIZE) {
+      console.log(`当前文件太大，超过配置: ${FILE_MAX_SIZE}`);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
     return false;
   }
-
-  return true;
 }
 
 export default async (ctx: Ctx) => {
@@ -133,7 +154,6 @@ export default async (ctx: Ctx) => {
 
   const pngquantPath = await getPngQuantPath();
   if (pngquantPath) {
-    console.log('pngquantPath: ', pngquantPath);
     PNG = new Pngquant({ exePath: pngquantPath }, { overwrite: true });
   }
 
@@ -176,4 +196,5 @@ export default async (ctx: Ctx) => {
 
 // (async () => {
 //   const shell = 'cps -u {imgPath}'
+
 // })()

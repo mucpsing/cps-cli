@@ -100,12 +100,9 @@ export class ConfigManager {
       display.start(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件...`);
       await this._readFile();
       display.succeed(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件 完成！`);
-      await delay(500);
       display.start('正在读取缓存数据...');
       await this._readOrgFile();
       display.succeed('读取缓存数据 完成！');
-
-      await delay(500);
       console.clear();
     } else {
       await this._readFile();
@@ -131,7 +128,6 @@ export class ConfigManager {
       await fse.writeJson(file, this.defaultConfig, { spaces: '  ' });
     } catch (err) {
       display.fail('.cpsrc 写入失败');
-      await delay(1000);
       console.error(err);
       process.exit(0);
     }
