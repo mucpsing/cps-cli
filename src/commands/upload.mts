@@ -50,27 +50,43 @@ async function getPngQuantPath() {
  * @Description - 复制图片到 upload.local.path
  */
 async function copyImg(imgList: string[], destPath: string) {
+  console.log('copyImg: ', copyImg);
   const result: string[] = [];
   for (let imgPath of imgList) {
     destPath = path.resolve(destPath);
     let srcImg = path.resolve(imgPath);
     let destImg = path.resolve(destPath, path.basename(imgPath));
 
+    let copyFlag = false;
+
     // let dirImg = path.resolve(path.dirname(imgPath));
 
     // 如果文件已经存在
-    if ((await exists(destImg)) && OVER_WRITE) {
-      // 复制
-      if (await exists(srcImg)) {
-        // await fse.copy(srcImg, destImg);
-
-        // 压缩文件
-        if (PNG) PNG.compress(srcImg, destImg);
+    if (await exists(destImg)) {
+      if (OVER_WRITE) {
+        copyFlag = true;
+      } else {
+        result.push(destImg);
+        continue;
       }
     }
 
-    // 不进行复制，直接返回true
-    result.push(destImg);
+    // 文件判断
+    if (await exists(srcImg)) {
+      copyFlag = true;
+    } else {
+      console.log('文件不存在:', srcImg);
+    }
+
+    if (copyFlag) {
+      // 复制
+      await fse.copy(srcImg, destImg);
+
+      // 压缩文件
+      if (PNG) PNG.compress(destImg);
+
+      result.push(destImg);
+    }
   }
 
   return result;
@@ -170,7 +186,10 @@ export default async (ctx: Ctx) => {
   const result = await copyImg(imgPathList, cwd);
 
   // 没有文件
-  if (result.length == 0) return Exit(0);
+  if (result.length == 0) {
+    console.log('没有文件被上传');
+    return Exit(0);
+  }
 
   // 上传仓库
   if (config['auto_push']) await ctx.utils.gitPushSync(cwd);
