@@ -29,11 +29,9 @@ import type { Ctx } from './globaltype.mjs';
     .option('-u, --upload <imgPath>', '上传图片到gitee/github仓库, 对应配置 .cpsrc.upload')
     .option('-s, --server [port]', '对应配置 .cpsrc.upload.server')
     .option('-tr, --tree', '生成当前目录的文件数')
-    .option('--test [any]', '测试命令');
-
-  // program.command("tree").action((str, options) => {
-  //   console.log({ str, options });
-  // });
+    .option('--test [any]', '测试命令')
+    .option('--config [key] [newKey]', '查看当前配置文件信息')
+    .option('--test [intputPath] <outputPath>', '测试');
 
   const options = program.parse().opts();
   const pkgPath = path.resolve(path.dirname(process.argv[1]), '../package.json');
@@ -59,8 +57,12 @@ import type { Ctx } from './globaltype.mjs';
     RunCommand = UploadCommand;
   } else if (options.test) {
     // 测试入口
-    configInitOptions.showLog = false;
+    console.log('options: ', options);
+    console.log(options.test);
+    console.log({ ctx });
+    configInitOptions.showLog = true;
     RunCommand = TestCommand;
+    return;
   } else if (options.server) {
     // cps -s
     // 本地静态服务器入口
@@ -71,8 +73,10 @@ import type { Ctx } from './globaltype.mjs';
     RunCommand = TreeCommand;
   } else if (options.compress) {
     RunCommand = CompressCommand;
+  } else if (options.config) {
+    RunCommand = configManager.parser;
   } else {
-    // 默认入口
+    // 默认进入可选菜单
     RunCommand = WellcomeCommand;
   }
 
