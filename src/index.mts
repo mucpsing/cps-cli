@@ -12,8 +12,9 @@ import WellcomeCommand from './commands/wellcome.mjs';
 import TemplateCommand from './commands/template.mjs';
 import UploadCommand from './commands/upload.mjs';
 import ServerCommand from './commands/server.mjs';
-import TestCommand from './commands/test.mjs';
 import TreeCommand from './commands/tree.mjs';
+
+import TestCommand from './commands/test.mjs';
 
 import * as utils from './utils/index.mjs';
 
@@ -28,7 +29,7 @@ import type { Ctx } from './globaltype.mjs';
     .option('-c, --compress <imgFile> <output>', '图片压缩(目前仅支持.png)')
     .option('-u, --upload <imgPath>', '上传图片到gitee/github仓库, 对应配置 .cpsrc.upload')
     .option('-s, --server [port]', '对应配置 .cpsrc.upload.server')
-    .option('-tr, --tree', '生成当前目录的文件数')
+    .option('-tr, --tree [exclude] [output]', '生成当前目录的文件数')
     .option('--test [any]', '测试命令');
 
   // program.command("tree").action((str, options) => {
@@ -43,7 +44,7 @@ import type { Ctx } from './globaltype.mjs';
     configManager, // 根据入参有不同的初始化选项
     pkg: fse.readJSONSync(pkgPath),
     utils,
-    argv: process.argv.slice(3, process.argv.length), //使用-u的话，后面的所有参数都解析为图片路径 {string[]} 对应命令所需要的参数
+    argv: process.argv.slice(3, process.argv.length), // 使用-u的话，后面的所有参数都解析为图片路径 {string[]} 对应命令所需要的参数
     program,
   };
 

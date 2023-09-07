@@ -25,18 +25,30 @@ const FILE_PREFIX_LAST = '`--';
 const BASE_PREFIX = '   |';
 const LINE_SUFFIX = ' #';
 
+const DEFAULT_EXCLUDE_LIST = ['node_modules', '.git'];
+
 const SUFFIX_REG = /\s(\w+)\//;
 const TREE_LIST: string[] = [];
 let CURRT_DEEP = 1;
 
-export function createTree(
-  target_dir: string,
-  indent: number = 1,
-  exclude: string[] = ['node_modules', '.git'],
-  maxRecursiveDeep: number = 100
-) {
+/**
+ * @Description - 生成目录树
+ *
+ * @param {string} target_dir            - 目标目录
+ * @param {string} exclude               - 要排除的文件/文件夹，默认DEFAULT_EXCLUDE_LIST
+ * @param {number} indent=0              - 根据层级自动生成的缩进
+ * @param {number} maxRecursiveDeep=100  - 最大递归深度
+ *
+ * @returns {} - {description}
+ *
+ */
+export function createTree(target_dir: string, exclude: string[] = [], indent: number = 0, maxRecursiveDeep: number = 100) {
   // 防止无限递归
-  if (CURRT_DEEP >= maxRecursiveDeep) return console.log('超过最大递归深度');
+  if (CURRT_DEEP >= maxRecursiveDeep) {
+    // console.log('超过最大递归深度');
+
+    return;
+  }
 
   const preIdent = new Array(indent).join(BASE_PREFIX);
 
@@ -49,7 +61,7 @@ export function createTree(
   for (let i = 0; i < dirinfo.length; i++) {
     let state = fs.statSync(path.join(target_dir, dirinfo[i]));
     if (state.isFile()) {
-      files.push(dirinfo[i]);
+      if (!exclude.includes(dirinfo[i])) files.push(dirinfo[i]);
     } else {
       if (!exclude.includes(dirinfo[i])) dirs.push(dirinfo[i]);
     }
@@ -65,6 +77,12 @@ export function createTree(
   }
 
   for (let i = 0; i < dirs.length; i++) {
+    if (indent == 0) {
+      console.log(dirs[i]);
+      const basename = path.basename(dirs[i]);
+      if (basename.startsWith('.')) continue;
+    }
+
     const dirName = `${preIdent}   ${DIR_PREFIX} ${dirs[i]}/`;
 
     // console.log(dirName);
@@ -77,7 +95,7 @@ export function createTree(
 
     // 递归调用
     CURRT_DEEP += 1;
-    createTree(nextPath, nextIdent, exclude, maxRecursiveDeep);
+    createTree(nextPath, DEFAULT_EXCLUDE_LIST, nextIdent, maxRecursiveDeep);
   }
 
   // 下一级的 文件目录 以及层级
@@ -107,8 +125,7 @@ function toFile(output_path = '', indent = '    ') {
     if (line.indexOf(path.basename(output_path)) < 0 && line.length <= maxLineLen) {
       let reg_res = line.split(SUFFIX_REG);
       if (reg_res && reg_res.length == 3) {
-        resStr +=
-          line + ' '.repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + '\n';
+        resStr += line + ' '.repeat(maxLineLen - line.length) + LINE_SUFFIX + ` 「${reg_res[1]}」` + '\n';
       } else {
         resStr += line + ' '.repeat(maxLineLen - line.length) + LINE_SUFFIX + ' \n';
       }
@@ -122,10 +139,11 @@ function toFile(output_path = '', indent = '    ') {
 
 export default async (ctx: Ctx) => {
   const target = process.cwd();
-  const output_path = process.argv.length >= 4 ? process.argv[3] : '';
+  const exclude = ctx.argv[0] ? [...ctx.argv[0].split(','), ...DEFAULT_EXCLUDE_LIST] : DEFAULT_EXCLUDE_LIST;
+  const output_path = ctx.argv[1] || 'tree.txtt';
 
   // 读取目录并打印
-  createTree(target);
+  createTree(target, exclude);
 
   // 保存文件
   const resultStr = toFile(output_path);
@@ -134,6 +152,7 @@ export default async (ctx: Ctx) => {
   copyToPaste(resultStr);
 
   log(`\n🙋${chalk.yellow.bold('结果已复制到粘贴板！！')}`);
+
   // 这个会阻碍复制命令
   // process.exit(0);
 };

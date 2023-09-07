@@ -8,7 +8,7 @@
  * @file_path "W:\CPS\MyProject\demo\cps-cli\cps-cli\src\utils"
  * @Filename "gifsicle.mts"
  * @Description: 调用gifsicle.exe来压缩gif文件，核心命令格式
- * gifsicle -O3 --lossy=200 .\input.gif -o output.gif
+ * gifsicle -O3 --lossy=200 .\input.gif -o output.gif - 【不好用，失真严重】
  */
 
 import fs from 'fs';
@@ -34,7 +34,7 @@ const DEFAULT_OPTIONS: GifsicleOptions = {
 
 export default class GifCompress {
   private default_options: GifsicleOptions = DEFAULT_OPTIONS;
-  private options: GifsicleOptions;
+  // private options: GifsicleOptions;
   private bin: string = '';
-  private params: string[];
+  // private params: string[];
 }
