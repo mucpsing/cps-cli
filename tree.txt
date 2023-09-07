@@ -1,81 +1,118 @@
-DIR:cps-cli                                                      # 
-   |-- .github/                                                  # 
-   |   |-- workflows/                                            # 「workflows」
-   |   |   `-- publish.yaml                                      # 
-   |-- bin/                                                      # 「bin」
-   |   `-- index.mjs                                             # 
-   |-- dist/                                                     # 「dist」
-   |   |-- commands/                                             # 「commands」
-   |   |   |-- wellcome.mjs                                      # 
-   |   |   |-- upload.mjs                                        # 
-   |   |   |-- tree.mjs                                          # 
-   |   |   |-- test.mjs                                          # 
-   |   |   |-- template.mjs                                      # 
-   |   |   |-- server.mjs                                        # 
-   |   |   `-- config.mjs                                        # 
-   |   |-- utils/                                                # 「utils」
-   |   |   |-- shell.mjs                                         # 
-   |   |   |-- server.mjs                                        # 
-   |   |   |-- index.mjs                                         # 
-   |   |   |-- gitee-download.mjs                                # 
-   |   |   `-- gitee-api.mjs                                     # 
-   |   |-- index.mjs                                             # 
-   |   `-- env.mjs                                               # 
-   |-- screenshot/                                               # 「screenshot」
-   |   |-- cps-cli/                                              # 
-   |   |   |-- cps@u.png                                         # 
-   |   |   |-- cps@u.gif                                         # 
-   |   |   |-- cps@template@projectName.gif                      # 
-   |   |   |-- cps@template.gif                                  # 
-   |   |   `-- cps.gif                                           # 
-   |-- src/                                                      # 「src」
-   |   |-- commands/                                             # 「commands」
-   |   |   |-- wellcome.mts                                      # 
-   |   |   |-- version.mts                                       # 
-   |   |   |-- upload.mts                                        # 
-   |   |   |-- tree.mts                                          # 
-   |   |   |-- test.mts                                          # 
-   |   |   |-- template.mts                                      # 
-   |   |   |-- server.mts                                        # 
-   |   |   `-- config.mts                                        # 
-   |   |-- scripts/                                              # 「scripts」
-   |   |   |-- python/                                           # 「python」
-   |   |   |   |-- replace_markdown_img_line.py                  # 
-   |   |   |   `-- remove_comments.py                            # 
-   |   |-- utils/                                                # 「utils」
-   |   |   |-- shell.mts                                         # 
-   |   |   |-- server.mts                                        # 
-   |   |   |-- pngquant.mts                                      # 
-   |   |   |-- index.mts                                         # 
-   |   |   |-- gitee-download.mts                                # 
-   |   |   `-- git-tools.mjs                                     # 
-   |   |-- test.mts                                              # 
-   |   |-- index.mts                                             # 
-   |   |-- globaltype.d.mts                                      # 
-   |   `-- env.mts                                               # 
-   |-- tools/                                                    # 「tools」
-   |   |-- pngquant/                                             # 「pngquant」
-   |   |   |-- README.txt                                        # 
-   |   |   |-- pngquant.exe                                      # 
-   |   |   |-- Drag PNG here to reduce palette to 256.bat        # 
-   |   |   |-- Drag PNG here to reduce palette automatically.bat # 
-   |   |   `-- COPYRIGHT                                         # 
-   |   |-- wepb/                                                 # 「wepb」
-   |   |   |-- cwebp/                                            # 「cwebp」
-   |   |   |   |-- libwebp-1.3.0-windows-x64.zip                 # 
-   |   |   |   |-- libwebp-1.3.0-mac-x86-64.tar.gz               # 
-   |   |   |   |-- libwebp-1.3.0-mac-arm64.tar.gz                # 
-   |   |   |   `-- libwebp-1.3.0-linux-x86-64.tar.gz             # 
-   |-- types/                                                    # 「types」
-   |   `-- index.d.mts                                           # 
-   |-- __test__/                                                 # 「__test__」
-   |-- yarn.lock                                                 # 
-   |-- yarn-error.log                                            # 
-   |-- tsconfig.json                                             # 
-   |-- README.md                                                 # 
-   |-- package.json                                              # 
-   |-- LICENSE                                                   # 
-   |-- index.mjs                                                 # 
-   |-- .npmrc                                                    # 
-   |-- .npmignore                                                # 
-   `-- .gitignore                                                # 
+DIR:cps-cli                                                  # 
+   |-- bin/                                                  # 「bin」
+   `-- index.mjs                                             # 
+   |-- dist/                                                 # 「dist」
+   |-- commands/                                             # 「commands」
+   |   |-- wellcome.mjs                                      # 
+   |   |-- version.mjs                                       # 
+   |   |-- upload.mjs                                        # 
+   |   |-- tree.mjs                                          # 
+   |   |-- test.mjs                                          # 
+   |   |-- template.mjs                                      # 
+   |   |-- server.mjs                                        # 
+   |   |-- config.mjs                                        # 
+   |   `-- compress.mjs                                      # 
+   |-- utils/                                                # 「utils」
+   |   |-- webp.mjs                                          # 
+   |   |-- shell.mjs                                         # 
+   |   |-- server.mjs                                        # 
+   |   |-- pngquant.mjs                                      # 
+   |   |-- index.mjs                                         # 
+   |   |-- gitee-download.mjs                                # 
+   |   |-- gitee-api.mjs                                     # 
+   |   |-- git-tools.mjs                                     # 
+   |   `-- gifsicle.mjs                                      # 
+   |-- test.mjs                                              # 
+   |-- index.mjs                                             # 
+   `-- env.mjs                                               # 
+   |-- screenshot/                                           # 「screenshot」
+   |-- cps-cli/                                              # 
+   |   |-- cps@u.png                                         # 
+   |   |-- cps@u.gif                                         # 
+   |   |-- cps-cli_800.gif                                   # 
+   |   |-- cps-cli.png                                       # 
+   |   `-- cps-cli.gif                                       # 
+   |-- src/                                                  # 「src」
+   |-- commands/                                             # 「commands」
+   |   |-- wellcome.mts                                      # 
+   |   |-- version.mts                                       # 
+   |   |-- upload.mts                                        # 
+   |   |-- tree.mts                                          # 
+   |   |-- test.mts                                          # 
+   |   |-- template.mts                                      # 
+   |   |-- server.mts                                        # 
+   |   |-- config.mts                                        # 
+   |   `-- compress.mts                                      # 
+   |-- scripts/                                              # 「scripts」
+   |   |-- python/                                           # 「python」
+   |   |   |-- replace_markdown_img_line.py                  # 
+   |   |   `-- remove_comments.py                            # 
+   |-- utils/                                                # 「utils」
+   |   |-- webp.mts                                          # 
+   |   |-- shell.mts                                         # 
+   |   |-- server.mts                                        # 
+   |   |-- pngquant.mts                                      # 
+   |   |-- index.mts                                         # 
+   |   |-- gitee-download.mts                                # 
+   |   |-- gitee-api.mts                                     # 
+   |   |-- git-tools.mts                                     # 
+   |   `-- gifsicle.mts                                      # 
+   |-- test.mts                                              # 
+   |-- index.mts                                             # 
+   |-- globaltype.d.mts                                      # 
+   `-- env.mts                                               # 
+   |-- tools/                                                # 「tools」
+   |-- gif/                                                  # 「gif」
+   |   `-- gifsicle.exe                                      # 
+   |-- pngquant/                                             # 「pngquant」
+   |   |-- README.txt                                        # 
+   |   |-- pngquant.exe                                      # 
+   |   |-- Drag PNG here to reduce palette to 256.bat        # 
+   |   |-- Drag PNG here to reduce palette automatically.bat # 
+   |   `-- COPYRIGHT                                         # 
+   |-- webp/                                                 # 「webp」
+   |   |-- bin/                                              # 「bin」
+   |   |   |-- webp_quality.exe                              # 
+   |   |   |-- webpmux.exe                                   # 
+   |   |   |-- webpinfo.exe                                  # 
+   |   |   |-- vwebp.exe                                     # 
+   |   |   |-- img2webp.exe                                  # 
+   |   |   |-- gif2webp.exe                                  # 
+   |   |   |-- get_disto.exe                                 # 
+   |   |   |-- freeglut.dll                                  # 
+   |   |   |-- dwebp.exe                                     # 
+   |   |   |-- cwebp.exe                                     # 
+   |   |   |-- anim_dump.exe                                 # 
+   |   |   `-- anim_diff.exe                                 # 
+   |   |-- doc/                                              # 「doc」
+   |   |   |-- tools.md                                      # 
+   |   |   `-- api.md                                        # 
+   |   |-- include/                                          # 「include」
+   |   |   |-- webp/                                         # 「webp」
+   |   |   |   |-- types.h                                   # 
+   |   |   |   |-- mux_types.h                               # 
+   |   |   |   |-- mux.h                                     # 
+   |   |   |   |-- encode.h                                  # 
+   |   |   |   |-- demux.h                                   # 
+   |   |   |   `-- decode.h                                  # 
+   |   |-- lib/                                              # 「lib」
+   |   |   |-- libwebpmux.lib                                # 
+   |   |   |-- libwebpdemux.lib                              # 
+   |   |   `-- libwebp.lib                                   # 
+   |   |-- test_ref.ppm                                      # 
+   |   |-- test.webp                                         # 
+   |   `-- README.md                                         # 
+   |-- types/                                                # 「types」
+   `-- index.d.mts                                           # 
+   |-- __test__/                                             # 「__test__」
+   |-- yarn.lock                                             # 
+   |-- yarn-error.log                                        # 
+   |-- tsconfig.json                                         # 
+   |-- TODO.md                                               # 
+   |-- README.md                                             # 
+   |-- package.json                                          # 
+   |-- LICENSE                                               # 
+   |-- index.mjs                                             # 
+   |-- .npmrc                                                # 
+   |-- .npmignore                                            # 
+   `-- .gitignore                                            # 

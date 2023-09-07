@@ -25,7 +25,7 @@ const FILE_PREFIX_LAST = '`--';
 const BASE_PREFIX = '   |';
 const LINE_SUFFIX = ' #';
 
-const DEFAULT_EXCLUDE_LIST = ['node_modules', '.git'];
+const DEFAULT_EXCLUDE_LIST = ['node_modules', '.git', '.venv', '__pycache__'];
 
 const SUFFIX_REG = /\s(\w+)\//;
 const TREE_LIST: string[] = [];
@@ -140,7 +140,7 @@ function toFile(output_path = '', indent = '    ') {
 export default async (ctx: Ctx) => {
   const target = process.cwd();
   const exclude = ctx.argv[0] ? [...ctx.argv[0].split(','), ...DEFAULT_EXCLUDE_LIST] : DEFAULT_EXCLUDE_LIST;
-  const output_path = ctx.argv[1] || 'tree.txtt';
+  const output_path = ctx.argv[1] || 'tree.txt';
 
   // 读取目录并打印
   createTree(target, exclude);
