@@ -17,12 +17,14 @@ import { promisify } from 'util';
 import fse from 'fs-extra';
 
 import Pngquant from '../utils/pngquant.mjs';
+import Gif from '../utils/gifsicle.mjs';
 import type { Ctx } from '../globaltype.mjs';
 import type { ConfigTemplate, ConfigUpload } from './config.mjs';
 
 const exists = promisify(fs.exists);
 
 let PNG: Pngquant | undefined;
+let GIF: Gif | undefined;
 
 // 最大文件尺寸
 const FILE_MAX_SIZE = 20;
@@ -32,17 +34,22 @@ function Exit(code: number) {
   return process.exit(code);
 }
 
-async function getPngQuantPath() {
+async function getToolsBinPath() {
   try {
+    const res: { [binPath: string]: string } = {};
+
     const [dirname, ...__] = process.argv[1].split('dist');
 
     const pngquantPath = path.resolve(dirname, 'tools/pngquant/pngquant.exe');
 
-    if (await exists(pngquantPath)) return pngquantPath;
+    const gifsiclePath = path.resolve(dirname, 'tools/gif/gifsicle.exe');
 
-    return '';
+    if (await exists(pngquantPath)) res.pngquantPath = pngquantPath;
+    if (await exists(gifsiclePath)) res.gifsiclePath = gifsiclePath;
+
+    return res;
   } catch (err) {
-    return '';
+    return {};
   }
 }
 
@@ -82,8 +89,16 @@ async function copyImg(imgList: string[], destPath: string) {
       // 复制
       await fse.copy(srcImg, destImg);
 
-      // 压缩文件
-      if (PNG) PNG.compress(destImg);
+      // 复制文件后再根据后缀名判断是否压缩
+      // let fileInfo = path.parse(destImg);
+      // switch (fileInfo.ext) {
+      //   case '.png':
+      //     if (PNG) PNG.compress(destImg);
+      //     break;
+      //   case '.gif':
+      //     if (GIF) await GIF.compress(destImg);
+      //     break;
+      // }
 
       result.push(destImg);
     }
@@ -92,9 +107,20 @@ async function copyImg(imgList: string[], destPath: string) {
   return result;
 }
 
-function isSameDestPath(config: ConfigTemplate, imgPathList: string[]): boolean {
+async function compressFile(inputFile: string) {
   try {
-    return true;
+    // 复制文件后再根据后缀名判断是否压缩
+    let fileInfo = path.parse(inputFile);
+    switch (fileInfo.ext) {
+      case '.png':
+        if (PNG) PNG.compress(inputFile);
+        break;
+      case '.gif':
+        if (GIF) await GIF.compress(inputFile);
+        break;
+    }
+
+    return false;
   } catch (err) {
     return false;
   }
@@ -168,9 +194,12 @@ export default async (ctx: Ctx) => {
   const config = ctx.configManager.getConfig('upload') as ConfigUpload;
   const cwd = config['path'];
 
-  const pngquantPath = await getPngQuantPath();
-  if (pngquantPath) {
-    PNG = new Pngquant({ exePath: pngquantPath }, { overwrite: true });
+  const toolsBinPaths = await getToolsBinPath();
+  if (toolsBinPaths.pngquantPath) {
+    PNG = new Pngquant({ exePath: toolsBinPaths.pngquantPath }, { overwrite: true });
+  }
+  if (toolsBinPaths.gifsiclePath) {
+    GIF = new Gif({ bin: toolsBinPaths.gifsiclePath }, { overwrite: true });
   }
 
   // 目录校验
@@ -183,13 +212,16 @@ export default async (ctx: Ctx) => {
   let pullRes = await ctx.utils.gitPull(cwd);
 
   // 复制文件到新仓库
-  const result = await copyImg(imgPathList, cwd);
+  const resultFileList = await copyImg(imgPathList, cwd);
 
   // 没有文件
-  if (result.length == 0) {
+  if (resultFileList.length == 0) {
     console.log('没有文件被上传');
     return Exit(0);
   }
+
+  // 对已上传的文件进行压缩
+  if (config.compress) resultFileList.forEach(async eachFile => await compressFile(eachFile));
 
   // 上传仓库
   if (config['auto_push']) await ctx.utils.gitPushSync(cwd);
@@ -204,9 +236,9 @@ export default async (ctx: Ctx) => {
     // 独立子进程开启服务器
     if (!hasLocalServer) ctx.utils.runCommandAlone('cps -s');
 
-    imgList = convertHttpProtocol(result, url);
+    imgList = convertHttpProtocol(resultFileList, url);
   } else {
-    imgList = convertFileProtocol(result);
+    imgList = convertFileProtocol(resultFileList);
   }
 
   printTyporaResult(imgList);

@@ -20,6 +20,8 @@ import { EMPTY_STRING } from '../env.mjs';
 import { getOrgInfo } from '../utils/gitee-api.mjs';
 import { currtTime, delay } from '../utils/index.mjs';
 
+import type { Ctx } from '../globaltype.mjs';
+
 console.log(process.env.USERPROFILE ? process.env.USERPROFILE : 'no');
 
 if (!process.env.USERPROFILE) process.env.USERPROFILE = '.';
@@ -40,6 +42,7 @@ export interface ConfigTemplate {
 export interface ConfigUpload {
   path: string;
   auto_push: boolean;
+  compress?: boolean;
   server: {
     port: number;
     enable: boolean;
@@ -75,6 +78,7 @@ export class ConfigManager {
       },
       upload: {
         path: '',
+        compress: true,
         auto_push: true,
         server: {
           port: 45462,
@@ -86,10 +90,35 @@ export class ConfigManager {
     this.config = Object.assign({}, this.defaultConfig);
   }
 
+  parser(ctx: Ctx) {
+    console.clear();
+
+    let key = ctx.argv[0] || undefined;
+    let newKey = ctx.argv[1] || undefined;
+
+    if (newKey) {
+      console.log('修改参数');
+    } else if (key) {
+      console.log('读取参数');
+    } else {
+      console.log('打印所有参数');
+    }
+  }
+
   getConfig(key: keyof Config) {
     if (this.config.hasOwnProperty(key)) {
       return this.config[key as keyof Config];
     }
+  }
+
+  setConfig(key: keyof Config, newKey?: keyof Config) {
+    if (!newKey) {
+      this.showConfig(key);
+    }
+  }
+
+  showConfig(key?: keyof Config) {
+    console.log(this.config);
   }
 
   async init({ showLog = false }) {
