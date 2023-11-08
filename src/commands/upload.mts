@@ -57,12 +57,19 @@ async function getToolsBinPath() {
  * @Description - 复制图片到 upload.local.path
  */
 async function copyImg(imgList: string[], destPath: string) {
-  console.log('copyImg: ', copyImg);
   const result: string[] = [];
   for (let imgPath of imgList) {
     destPath = path.resolve(destPath);
     let srcImg = path.resolve(imgPath);
-    let destImg = path.resolve(destPath, path.basename(imgPath));
+
+    let basename = path.basename(imgPath);
+    // let outputName = basename.replaceAll(' ', '-'); // 文件名的空格处理
+    // if (outputName.indexOf('Pasted-image-')) {
+    //   outputName.replace('Pasted-image-', 'obsidian-');
+    // }
+    // const destImg = path.resolve(destPath, outputName);
+
+    const destImg = path.resolve(destPath, basename);
 
     let copyFlag = false;
 
@@ -159,7 +166,7 @@ function convertHttpProtocol(contextList: string[], url: string) {
     const filename = path.basename(item);
     const staticRoute = path.basename(path.dirname(item));
 
-    result.push(`${url}/${staticRoute}/${filename}`);
+    result.push(encodeURI(`${url}/${staticRoute}/${filename}`));
   });
   return result;
 }
@@ -231,7 +238,6 @@ export default async (ctx: Ctx) => {
     const port = config.server['port'] || ctx.pkg.config['port'];
     const url = `http://localhost:${port}`;
     const hasLocalServer = await ctx.utils.checkUrl(url);
-    console.log('hasLocalServer: ', hasLocalServer);
 
     // 独立子进程开启服务器
     if (!hasLocalServer) ctx.utils.runCommandAlone('cps -s');

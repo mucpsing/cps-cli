@@ -40,9 +40,10 @@ export interface ConfigTemplate {
 }
 
 export interface ConfigUpload {
-  path: string;
-  auto_push: boolean;
+  path: string; // 关联的本地文件位置
+  auto_push: boolean; // 是否自动上传
   compress?: boolean;
+  mode: 'server' | 'watch'; // 使用server或者watch，两种模式
   server: {
     port: number;
     enable: boolean;
@@ -80,6 +81,7 @@ export class ConfigManager {
         path: '',
         compress: true,
         auto_push: true,
+        mode: 'server',
         server: {
           port: 45462,
           enable: false,
