@@ -41,11 +41,9 @@ export default async (ctx: Ctx) => {
     cwd,
   });
 
-  console.log(res.res || res.err);
+  const serverPort = await serverStart({ staticPath: cwd, port });
 
-  display.info(chalk.bold.yellow(`start local server at port:${port}`));
-  display.info(chalk.bold.yellow(`start local server at path:${cwd}`));
   display.succeed(chalk.bold.green(`server start succeed`));
-
-  await serverStart({ staticPath: cwd, port });
+  display.info(chalk.bold.yellow(`start local server at port:${serverPort}`));
+  display.info(chalk.bold.yellow(`start local server at path:${cwd}`));
 };
