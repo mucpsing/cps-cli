@@ -1,7 +1,7 @@
 name: Npm Publish
 
 env:
-  NODE_VERSION: "16"
+  NODE_VERSION: "20"
   NPM_USERNAME: "mucpsing"
   NPM_EMAIL: "373704015@qq.com"
 
