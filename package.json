@@ -5,7 +5,7 @@
     "url": "https://www.capsion.top"
   },
   "name": "@mucpsing/cli",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "个人自用脚手架",
   "main": "index.mjs",
   "module": "bin/index.ems.js",
@@ -17,6 +17,7 @@
   },
   "os": ["linux", "win32"],
   "scripts": {
+    "commit": "git-cz",
     "test": "node dist/index.mjs --test",
     "build": "tsc"
   },
@@ -27,6 +28,9 @@
   "keywords": ["cps-cli", "cpasion", "cli"],
   "license": "MIT",
   "devDependencies": {
+    "commitizen": "^4.3.0",
+    "commitlint-config-cz": "^0.13.3",
+    "cz-customizable": "^7.0.0",
     "@types/download": "^8.0.1",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^9.0.13",
@@ -47,7 +51,7 @@
     "git-clone": "^0.2.0",
     "glob": "^10.2.2",
     "i18n": "^0.13.4",
-    "inquirer": "^9.2.0",
+    "inquirer": "8",
     "moment": "^2.29.2",
     "ora": "^6.0.1"
   },
@@ -57,9 +61,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/mucpsing/cps-cli"
-  },
-  "config": {
-    "port": "45461"
   },
   "publishConfig": {
     "access": "public"

@@ -103,7 +103,7 @@ export class ConfigManager {
     } else if (key) {
       console.log('读取参数');
     } else {
-      console.log('打印所有参数');
+      console.log('打印所有参数123123');
     }
   }
 
