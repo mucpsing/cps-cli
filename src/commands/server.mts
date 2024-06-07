@@ -28,21 +28,13 @@ export default async (ctx: Ctx) => {
   const display = ora();
 
   display.start(chalk.bold.red('获取仓库最新数据...\n'));
-  let res = await ctx.utils.shell(['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-pull'], {
-    cwd,
-  });
-
-  res = await ctx.utils.shell(['git', 'pull', 'origin', 'master'], {
-    cwd,
-  });
+  await ctx.utils.shell(['git', 'add', '.', '&', 'git', 'commit', '-m', 'cps-cli-pull'], { cwd });
+  await ctx.utils.shell(['git', 'pull', 'origin', 'master'], { cwd });
 
   display.start(chalk.bold.red('上传仓库最新数据...\n'));
-  res = await ctx.utils.shell(['git', 'push', 'origin', 'master'], {
-    cwd,
-  });
+  await ctx.utils.shell(['git', 'push', 'origin', 'master'], { cwd });
 
   const serverPort = await serverStart({ staticPath: cwd, port });
-
   display.succeed(chalk.bold.green(`server start succeed`));
   display.info(chalk.bold.yellow(`start local server at port:${serverPort}`));
   display.info(chalk.bold.yellow(`start local server at path:${cwd}`));
