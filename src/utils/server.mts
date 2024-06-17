@@ -60,7 +60,7 @@ async function findAvailablePort(port: number): Promise<number> {
 export const serverStart = async ({ staticPath, port = 3000 }: ServerParams) => {
   const staticRoute = `/${path.basename(staticPath)}`;
 
-  const freePort = await findAvailablePort(port);
+  port = await findAvailablePort(port);
 
   express()
     .use(express.json())
@@ -73,9 +73,9 @@ export const serverStart = async ({ staticPath, port = 3000 }: ServerParams) => 
       res.send('done !');
     })
     .use(staticRoute, express.static(staticPath))
-    .listen(freePort);
+    .listen(port);
 
-  return freePort;
+  return port;
 };
 
 // serverStart({ staticPath: 'W:/CPS/MyProject/markdown-image/image', port: 45462 });
