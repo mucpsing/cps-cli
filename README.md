@@ -39,7 +39,7 @@ graph LR;
     B1["关联组织gitee|github"]
     
     C(["开启一个本地静态服务器"])
-    C1(["关联路径在.cpsrc中配置"])
+    C1(["关联配置文件{user}/.cpsrc"])
     
     
     D(["生成目录树"])
@@ -86,8 +86,20 @@ graph LR;
 
 ## 安装|Install
 
+### npm
+
 ```bash
 npm i -g @mucpsing/cli
+```
+
+### 本地
+
+```bash
+git clone --depth=1 git@github.com:mucpsing/cps-cli.git
+
+cd cps-cli
+
+npm link
 ```
 
 
