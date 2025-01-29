@@ -21,6 +21,7 @@ import * as utils from './utils/index.mjs';
 import type { Ctx } from './globaltype.mjs';
 
 (async () => {
+  console.clear()
   // 解析参数;
   const program = new Command()
     .option('-v --version', '显示当前版本号')

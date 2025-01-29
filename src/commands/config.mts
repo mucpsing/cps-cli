@@ -12,6 +12,8 @@
 
 import * as path from 'path';
 import { log } from 'console';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 
 import fse from 'fs-extra';
 import ora, { type Ora } from 'ora';
@@ -113,13 +115,15 @@ export class ConfigManager {
     }
   }
 
-  setConfig(key: keyof Config, newKey?: keyof Config) {
-    if (!newKey) {
-      this.showConfig(key);
+  async setConfig(key: keyof Config, newData: any) {
+    if (this.config.hasOwnProperty(key)) {
+      Object.assign(this.config[key], newData);
+
+      await this._createFile();
     }
   }
 
-  showConfig(key?: keyof Config) {
+  async showConfig(key?: keyof Config) {
     console.log(this.config);
   }
 
@@ -127,14 +131,15 @@ export class ConfigManager {
     // 读取本地配置文件
     // 判断是否需要更新文件
     if (showLog) {
-      const display = ora();
-      display.start(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件...`);
+      this.display.start(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件...`);
+      await delay(600);
       await this._readFile();
-      display.succeed(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件 完成！`);
-      display.start('正在读取缓存数据...');
+      this.display.succeed(`读取${DEFAULT_CONFIG_FILE_PATH}配置文件 完成！`);
+      this.display.start('正在读取缓存数据...');
+      await delay(600);
       await this._readOrgFile();
-      display.succeed('读取缓存数据 完成！');
-      console.clear();
+      this.display.succeed('读取缓存数据 完成！');
+      this.display.clear();
     } else {
       await this._readFile();
       await this._readOrgFile();
@@ -153,17 +158,33 @@ export class ConfigManager {
     const file = this.configFilePath;
     const display = this.display;
 
-    display.start(`创建配置文件...`);
-
     try {
+      // 提示用户输入地址
+      if (!this.defaultConfig.upload.path) {
+        display.clear();
+        display.stop();
+
+        log(`${chalk.yellow.bgCyan('当前未设置静态服务器的图片目录')}`);
+
+        const message = `请输入静态图片服务器的目录路径`;
+
+        const anwser = await inquirer.prompt({ name: 'path', type: 'input', message });
+
+        if (anwser.path) this.defaultConfig.upload.path = anwser.path;
+      }
+
+      display.start(`创建配置文件...`);
+
       await fse.writeJson(file, this.defaultConfig, { spaces: '  ' });
     } catch (err) {
-      display.fail('.cpsrc 写入失败');
+      // display.fail('.cpsrc 写入失败');
       console.error(err);
       process.exit(0);
     }
 
     display.succeed('文件创建完成');
+    await delay(600);
+
     return this.defaultConfig;
   }
 
