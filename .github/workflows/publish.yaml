@@ -1,7 +1,9 @@
 name: Npm Publish
 
 env:
-  NODE_VERSION: "16"
+  NODE_VERSION: "20"
+  NPM_USERNAME: "mucpsing"
+  NPM_EMAIL: "373704015@qq.com"
 
 on:
   push:
@@ -24,11 +26,21 @@ jobs:
     - name: npm install
       run: npm install
 
-    - name: Publish
-      run: |
-        npm publish --access public
+    - name: build
+      run: tsc
+
+    - name: check_env
+      run: echo "${{env.NPM_USERNAME}}@${{env.NPM_EMAIL}}"
+
+    - name: check_NPM
+      run: npm who am i
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
+      
+    - name: Publish
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
       # uses: JS-DevTools/npm-publish@v1
       # with:
       #   token: ${{secrets.NPM_TOKEN}}
