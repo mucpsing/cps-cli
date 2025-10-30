@@ -19,6 +19,7 @@
   "scripts": {
     "commit": "git-cz",
     "test": "node dist/index.mjs --test",
+    "dev":"tsc && node dist/index.mjs",
     "build": "tsc"
   },
   "bugs": {

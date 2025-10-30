@@ -13,6 +13,7 @@ import TemplateCommand from './commands/template.mjs';
 import UploadCommand from './commands/upload.mjs';
 import ServerCommand from './commands/server.mjs';
 import TreeCommand from './commands/tree.mjs';
+import AddMdFrontMatter from './commands/mdAddFrontMatter.mjs'
 
 import TestCommand from './commands/test.mjs';
 
@@ -22,6 +23,7 @@ import type { Ctx } from './globaltype.mjs';
 
 (async () => {
   console.clear()
+
   // 解析参数;
   const program = new Command()
     .option('-v --version', '显示当前版本号')
@@ -33,7 +35,8 @@ import type { Ctx } from './globaltype.mjs';
     .option('-tr, --tree [exclude] [output]', '生成当前目录的文件数')
     .option('--test [any]', '测试命令')
     .option('--config [key] [newKey]', '查看当前配置文件信息')
-    .option('--test [intputPath] <outputPath>', '测试');
+    .option('--test [intputPath] <outputPath>', '测试')
+    .option('--addMdFrontMatter [targetPath]', 'targetPath可以是单个文件，也可以是文件夹')
 
   const options = program.parse().opts();
   const pkgPath = path.resolve(path.dirname(process.argv[1]), '../package.json');
@@ -77,6 +80,8 @@ import type { Ctx } from './globaltype.mjs';
     RunCommand = CompressCommand;
   } else if (options.config) {
     RunCommand = configManager.parser;
+  }else if(options.addMdFrontMatter) {
+    RunCommand = 
   } else {
     // 默认进入可选菜单
     RunCommand = WellcomeCommand;
