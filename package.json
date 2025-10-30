@@ -15,23 +15,27 @@
   "bin": {
     "cps": "dist/index.mjs"
   },
-  "os": ["linux", "win32"],
+  "os": [
+    "linux",
+    "win32"
+  ],
   "scripts": {
     "commit": "git-cz",
     "test": "node dist/index.mjs --test",
-    "dev":"tsc && node dist/index.mjs",
+    "dev": "tsc && node dist/index.mjs",
     "build": "tsc"
   },
   "bugs": {
     "url": "https://github.com/mucpsing/cps-cli/issues",
     "email": "373704015@qq.com"
   },
-  "keywords": ["cps-cli", "cpasion", "cli"],
+  "keywords": [
+    "cps-cli",
+    "cpasion",
+    "cli"
+  ],
   "license": "MIT",
   "devDependencies": {
-    "commitizen": "^4.3.0",
-    "commitlint-config-cz": "^0.13.3",
-    "cz-customizable": "^7.0.0",
     "@types/download": "^8.0.1",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^9.0.13",
@@ -39,6 +43,9 @@
     "@types/inquirer": "^9.0.3",
     "@types/moment": "^2.13.0",
     "@types/node": "^17.0.8",
+    "commitizen": "^4.3.0",
+    "commitlint-config-cz": "^0.13.3",
+    "cz-customizable": "^7.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
@@ -54,7 +61,8 @@
     "i18n": "^0.13.4",
     "inquirer": "8",
     "moment": "^2.29.2",
-    "ora": "^6.0.1"
+    "ora": "^6.0.1",
+    "yaml": "^2.8.1"
   },
   "engines": {
     "node": ">=16.0.0"
